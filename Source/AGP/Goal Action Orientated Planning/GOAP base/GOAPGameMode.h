@@ -12,7 +12,7 @@ class UWorldState;
  * 
  */
 UCLASS()
-class NAVMESH_TUTORIAL_API AGOAPGameMode : public AGameModeBase
+class AGP_API AGOAPGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 public:

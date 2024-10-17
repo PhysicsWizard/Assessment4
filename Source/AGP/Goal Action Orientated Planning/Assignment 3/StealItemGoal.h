@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Goal.h"
+#include "AGP/Goal Action Orientated Planning/GOAP base/Goal.h"
 #include "StealItemGoal.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class NAVMESH_TUTORIAL_API UStealItemGoal : public UGoal
+class AGP_API UStealItemGoal : public UGoal
 {
 	GENERATED_BODY()
 

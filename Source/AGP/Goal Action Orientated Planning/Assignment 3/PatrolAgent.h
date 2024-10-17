@@ -2,16 +2,16 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Agent.h"
+#include "CoreMinimal.h"   
 #include "PatrolAgentBeliefs.h"
+#include "AGP/Goal Action Orientated Planning/GOAP base/Agent.h"
 #include "PatrolAgent.generated.h"
 
 /**
  * 
  */
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class NAVMESH_TUTORIAL_API UPatrolAgent : public UAgent
+class AGP_API UPatrolAgent : public UAgent
 {
 	GENERATED_BODY()
 

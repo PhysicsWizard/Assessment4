@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Action.h"
 #include "PatrolAgentBeliefs.h"
+#include "AGP/Goal Action Orientated Planning/GOAP base/Action.h"
 #include "HideAction.generated.h"
 
 class AAIController;
@@ -13,7 +13,7 @@ class UPatrolAgent;
  * 
  */
 UCLASS()
-class NAVMESH_TUTORIAL_API UHideAction : public UAction
+class AGP_API UHideAction : public UAction
 {
 	GENERATED_BODY()
 public:

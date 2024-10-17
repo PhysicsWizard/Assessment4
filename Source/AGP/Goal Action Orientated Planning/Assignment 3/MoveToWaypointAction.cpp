@@ -1,8 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MoveToWaypointAction.h"
-#include "Agent.h"
+#include "MoveToWaypointAction.h"  
 #include "AIController.h"
 #include "PatrolAgent.h"
 #include "GameFramework/Character.h"

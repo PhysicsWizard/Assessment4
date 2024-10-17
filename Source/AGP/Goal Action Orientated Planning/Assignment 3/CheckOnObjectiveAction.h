@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Action.h"
+#include "AGP/Goal Action Orientated Planning/GOAP base/Action.h"
 #include "CheckOnObjectiveAction.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class NAVMESH_TUTORIAL_API UCheckOnObjectiveAction : public UAction
+class AGP_API UCheckOnObjectiveAction : public UAction
 {
 	GENERATED_BODY()
 	

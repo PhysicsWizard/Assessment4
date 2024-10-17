@@ -3,15 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Agent.h"
 #include "ThiefAgentBeliefs.h"
+#include "AGP/Goal Action Orientated Planning/GOAP base/Agent.h"
 #include "ThiefAgent.generated.h"
 
 /**
  * 
  */
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class NAVMESH_TUTORIAL_API UThiefAgent : public UAgent
+class AGP_API UThiefAgent : public UAgent
 {
 	GENERATED_BODY()
 

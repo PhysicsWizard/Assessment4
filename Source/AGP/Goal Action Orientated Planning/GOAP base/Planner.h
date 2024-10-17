@@ -16,7 +16,7 @@ class UBeliefs;
  * 
  */
 UCLASS()
-class NAVMESH_TUTORIAL_API UPlanner : public UObject
+class AGP_API UPlanner : public UObject
 {
 	GENERATED_BODY()
 protected:

@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Action.h"
+#include "CoreMinimal.h"   
+#include "AGP/Goal Action Orientated Planning/GOAP base/Action.h"
 #include "ChaseThiefAction.generated.h"
 
 class UPatrolAgent;
@@ -14,7 +14,7 @@ class UPatrolAgentBeliefs;
  * 
  */
 UCLASS()
-class NAVMESH_TUTORIAL_API UChaseThiefAction : public UAction
+class AGP_API UChaseThiefAction : public UAction
 {
 	GENERATED_BODY()
 public:

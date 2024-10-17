@@ -13,7 +13,7 @@
  * 
  */
 UCLASS()
-class NAVMESH_TUTORIAL_API UAction : public UObject
+class AGP_API UAction : public UObject
 {
 	GENERATED_BODY()
 

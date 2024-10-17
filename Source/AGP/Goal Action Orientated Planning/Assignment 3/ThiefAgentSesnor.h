@@ -2,16 +2,16 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "AgentSensor.h"
+#include "CoreMinimal.h"    
 #include "ThiefAgent.h"
+#include "AGP/Goal Action Orientated Planning/GOAP base/AgentSensor.h"
 #include "ThiefAgentSesnor.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class NAVMESH_TUTORIAL_API UThiefAgentSesnor : public UAgentSensor
+class AGP_API UThiefAgentSesnor : public UAgentSensor
 {
 	GENERATED_BODY()
 

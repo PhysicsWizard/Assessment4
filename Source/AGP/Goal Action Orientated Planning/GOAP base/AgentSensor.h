@@ -13,7 +13,7 @@
 class UAgent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class NAVMESH_TUTORIAL_API UAgentSensor : public UActorComponent
+class AGP_API UAgentSensor : public UActorComponent
 {
 	GENERATED_BODY()
 

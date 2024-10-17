@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class NAVMESH_TUTORIAL_API UWorldState : public UObject
+class AGP_API UWorldState : public UObject
 {
 	GENERATED_BODY()
 

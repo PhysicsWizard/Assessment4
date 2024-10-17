@@ -19,7 +19,7 @@ class UBeliefs;
 class UPlanner;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class NAVMESH_TUTORIAL_API UAgent : public UActorComponent
+class AGP_API UAgent : public UActorComponent
 {
 	GENERATED_BODY()
 

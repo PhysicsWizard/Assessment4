@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Beliefs.h"
+#include "AGP/Goal Action Orientated Planning/GOAP base/Beliefs.h"
 #include "ThiefAgentBeliefs.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class NAVMESH_TUTORIAL_API UThiefAgentBeliefs : public UBeliefs
+class AGP_API UThiefAgentBeliefs : public UBeliefs
 {
 	GENERATED_BODY()
 protected: 

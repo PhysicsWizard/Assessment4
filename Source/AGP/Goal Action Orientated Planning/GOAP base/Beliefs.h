@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class NAVMESH_TUTORIAL_API UBeliefs : public UObject
+class AGP_API UBeliefs : public UObject
 {
 	GENERATED_BODY()
 

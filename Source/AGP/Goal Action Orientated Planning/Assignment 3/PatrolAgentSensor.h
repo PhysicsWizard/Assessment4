@@ -2,9 +2,9 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "AgentSensor.h"
+#include "CoreMinimal.h"    
 #include "PatrolAgent.h"
+#include "AGP/Goal Action Orientated Planning/GOAP base/AgentSensor.h"
 #include "PatrolAgentSensor.generated.h"
 
 class UPatrolAgent;
@@ -12,7 +12,7 @@ class UPatrolAgent;
  * 
  */
 UCLASS()
-class NAVMESH_TUTORIAL_API UPatrolAgentSensor : public UAgentSensor
+class AGP_API UPatrolAgentSensor : public UAgentSensor
 {
 	GENERATED_BODY()
 

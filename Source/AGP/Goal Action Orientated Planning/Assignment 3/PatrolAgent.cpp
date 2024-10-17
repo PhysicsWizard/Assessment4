@@ -1,8 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PatrolAgent.h"
-#include "AgentSensor.h"
+#include "PatrolAgent.h"  
 #include "AIController.h"
 #include "ChaseThief.h"
 #include "ChaseThiefAction.h"

@@ -7,7 +7,7 @@
 #include "InteractableObject.generated.h"
 
 UCLASS()
-class NAVMESH_TUTORIAL_API AInteractableObject : public AActor
+class AGP_API AInteractableObject : public AActor
 {
 	GENERATED_BODY()
 	

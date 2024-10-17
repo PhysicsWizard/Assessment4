@@ -2,12 +2,9 @@
 
 
 #include "ChaseThiefAction.h"
-
-#include "Action.h"
+ 
 #include "GameFramework/Character.h"  // Include ACharacter
-#include "GameFramework/CharacterMovementComponent.h" 
-#include "Agent.h"
-#include "AgentSensor.h"
+#include "GameFramework/CharacterMovementComponent.h"   
 #include "AIController.h"
 #include "PatrolAgent.h"
 #include "PatrolAgentBeliefs.h"

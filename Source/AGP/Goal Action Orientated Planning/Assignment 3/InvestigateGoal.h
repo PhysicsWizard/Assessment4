@@ -2,15 +2,15 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Goal.h"
+#include "CoreMinimal.h"   
+#include "AGP/Goal Action Orientated Planning/GOAP base/Goal.h"
 #include "InvestigateGoal.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class NAVMESH_TUTORIAL_API UInvestigateGoal : public UGoal
+class AGP_API UInvestigateGoal : public UGoal
 {
 	GENERATED_BODY()
 

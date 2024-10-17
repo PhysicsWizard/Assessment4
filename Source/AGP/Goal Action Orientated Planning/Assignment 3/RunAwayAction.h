@@ -2,16 +2,16 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Action.h"
+#include "CoreMinimal.h"  
 #include "ThiefAgentBeliefs.h"
+#include "AGP/Goal Action Orientated Planning/GOAP base/Action.h"
 #include "RunAwayAction.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class NAVMESH_TUTORIAL_API URunAwayAction : public UAction
+class AGP_API URunAwayAction : public UAction
 {
 	GENERATED_BODY()
 

@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Goal.h"
+#include "AGP/Goal Action Orientated Planning/GOAP base/Goal.h"
 #include "RunAwayGoal.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class NAVMESH_TUTORIAL_API URunAwayGoal : public UGoal
+class AGP_API URunAwayGoal : public UGoal
 {
 	GENERATED_BODY()
 	URunAwayGoal();

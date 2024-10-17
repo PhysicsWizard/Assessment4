@@ -12,7 +12,7 @@
  * 
  */
 UCLASS()
-class NAVMESH_TUTORIAL_API UGoal : public UObject
+class AGP_API UGoal : public UObject
 {
 	GENERATED_BODY()
 

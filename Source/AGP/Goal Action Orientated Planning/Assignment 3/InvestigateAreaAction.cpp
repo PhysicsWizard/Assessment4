@@ -2,8 +2,7 @@
 
 
 #include "InvestigateAreaAction.h"
-#include "NavigationSystem.h"
-#include "Agent.h"
+#include "NavigationSystem.h"    
 #include "PatrolAgent.h"
 #include "PatrolAgentBeliefs.h"
 #include "PatrolGoal.h"

@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Action.h"
+#include "CoreMinimal.h" 
+#include "AGP/Goal Action Orientated Planning/GOAP base/Action.h"
 #include "MoveToWaypointAction.generated.h"
 
 class UPatrolAgentBeliefs;
@@ -11,7 +11,7 @@ class UPatrolAgentBeliefs;
  * 
  */
 UCLASS()
-class NAVMESH_TUTORIAL_API UMoveToWaypointAction : public UAction
+class AGP_API UMoveToWaypointAction : public UAction
 {
 	GENERATED_BODY()
 

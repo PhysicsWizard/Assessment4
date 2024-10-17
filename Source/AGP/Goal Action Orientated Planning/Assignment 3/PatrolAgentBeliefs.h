@@ -2,15 +2,15 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Beliefs.h"
+#include "CoreMinimal.h" 
+#include "AGP/Goal Action Orientated Planning/GOAP base/Beliefs.h"
 #include "PatrolAgentBeliefs.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class NAVMESH_TUTORIAL_API UPatrolAgentBeliefs : public UBeliefs
+class AGP_API UPatrolAgentBeliefs : public UBeliefs
 {
 	GENERATED_BODY()
 
