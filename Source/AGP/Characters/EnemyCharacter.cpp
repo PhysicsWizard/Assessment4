@@ -106,8 +106,10 @@ void AEnemyCharacter::OnSensedPawn(APawn* SensedActor)
 {
 	if (APlayerCharacter* Player = Cast<APlayerCharacter>(SensedActor))
 	{
+		//If see a player, increase their times detected. This will be changed to match the AI implementation when merging assessment 4. 
 		SensedCharacter = Player;
-		//UE_LOG(LogTemp, Display, TEXT("Sensed Player"))
+		Player->IncreaseTimesDetected();
+		UE_LOG(LogTemp, Display, TEXT("Sensed Player"))
 	}
 }
 
@@ -196,5 +198,15 @@ APlayerCharacter* AEnemyCharacter::FindPlayer() const
 		UE_LOG(LogTemp, Error, TEXT("Unable to find the Player Character in the world."))
 	}
 	return Player;
+}
+
+void AEnemyCharacter::SetStats(FEnemyStats StatsToSet)
+{
+	Stats = StatsToSet;
+}
+
+FEnemyStats AEnemyCharacter::GetStats()
+{
+	return Stats;
 }
 

@@ -25,6 +25,26 @@ enum class EEnemyState : uint8
 	Evade
 };
 
+USTRUCT(BlueprintType)
+struct FEnemyStats
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere)
+	float Aggression;
+
+	UPROPERTY(EditAnywhere)
+	float SizeFactor;
+
+	UPROPERTY(EditAnywhere)
+	float NoiseSensitivity;
+
+	UPROPERTY(EditAnywhere)
+	bool ImmuneToInstaKills;
+
+	FEnemyStats()
+		: Aggression(10.0f), SizeFactor(1.0f), NoiseSensitivity(1.0f), ImmuneToInstaKills(false){}
+};
+
 /**
  * A class representing the logic for an AI controlled enemy character. 
  */
@@ -111,10 +131,16 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float PathfindingError = 150.0f; // 150 cm from target by default.
 
+	UPROPERTY(EditAnywhere)
+	FEnemyStats Stats;
+	
 public:	
 
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	FEnemyStats GetStats();
+	void SetStats(FEnemyStats StatsToSet);
 
 private:
 	

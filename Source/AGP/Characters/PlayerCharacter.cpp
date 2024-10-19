@@ -79,6 +79,14 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//Reset Kills Each minute.
+	if (MinuteTimer <= 0)
+	{
+		SpecialKillsPerformedInLastMinute = 0;
+		EnemiesKilledInLastMinute = 0;
+		MinuteTimer = 60.0f;
+	}
+
 }
 
 // Called to bind functionality to input
@@ -122,5 +130,20 @@ void APlayerCharacter::FireWeapon(const FInputActionValue& Value)
 	{
 		Fire(BulletStartPosition->GetComponentLocation() + 10000.0f * CameraForward);
 	}
+}
+
+void APlayerCharacter::IncreaseTimesDetected()
+{
+	TimesDetected++;
+}
+
+float APlayerCharacter::GetTimesDetected()
+{
+	return TimesDetected;
+}
+
+int APlayerCharacter::GetSpecialKillsPerformedInLastMinute()
+{
+	return SpecialKillsPerformedInLastMinute;
 }
 

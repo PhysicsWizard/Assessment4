@@ -33,6 +33,8 @@ public:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	void OnDeath();
+	
+	int GetEnemiesKilledInLastMinute() const;
 
 protected:
 	// Called when the game starts or when spawned
@@ -65,6 +67,9 @@ protected:
 	 * @param FireAtLocation The location that you want to fire at.
 	 */
 	void Fire(const FVector& FireAtLocation);
+
+	UPROPERTY()
+	int EnemiesKilledInLastMinute = 0;
 
 public:	
 	// Called every frame
