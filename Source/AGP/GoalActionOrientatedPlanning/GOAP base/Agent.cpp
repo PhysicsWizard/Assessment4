@@ -37,7 +37,6 @@ void UAgent::BeginPlay()
 
 	// Safely get AIController
 	AIController = Cast<AAIController>(GetOwner()->GetInstigatorController());
-	
 }
 
 

@@ -83,7 +83,7 @@ void UPatrolAgent::BeginPlay()
 	AvailableAction.Add(NewObject<UInvestigateAreaAction>(this));
 	AvailableAction.Add(NewObject<UMoveToWaypointAction>(this));
 	AvailableAction.Add(NewObject<UChaseThiefAction>(this));
-	
+	/*
 	// Initialize WorldState as a singleton
 	WorldState = UWorldState::GetInstance();
 	if(!WorldState)
@@ -120,7 +120,7 @@ void UPatrolAgent::BeginPlay()
 	StimuliSourceComponent->RegisterComponent();
 	StimuliSourceComponent->RegisterForSense(UAISense_Sight::StaticClass());
 	StimuliSourceComponent->RegisterWithPerceptionSystem();
-	
+	*/
 	// Set the initial waypoint
 	if (Waypoints.Num() > 0)
 	{
