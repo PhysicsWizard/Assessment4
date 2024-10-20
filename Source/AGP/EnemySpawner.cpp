@@ -26,7 +26,7 @@ void AEnemySpawner::BeginPlay()
 	//Set the spawn parameters to ignore collision; this is so that spawns always happen. Also Get a reference to the player. 
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));
-	
+	UE_LOG(LogTemp, Log, TEXT("Started"));
 }
 
 // Called every frame
@@ -50,8 +50,9 @@ void AEnemySpawner::Tick(float DeltaTime)
 void AEnemySpawner::SpawnEnemy()
 {
 	//Check if using the correct game instance; this is used to get the enemy class for spawning.
-	if (const AMultiplayerGameMode* GameInstance = GetWorld()->GetGameInstance<AMultiplayerGameMode>())
+	if (const AMultiplayerGameMode* GameInstance = Cast<AMultiplayerGameMode>(GetWorld()->GetAuthGameMode()))
 	{
+		UE_LOG(LogTemp, Log, TEXT("Found GameInstance"));
 		//Find a spawn location around the player. Then Make sure it is above ground.
 		FVector PlayerLocation = PlayerCharacter->GetActorLocation();
 		FVector PointInSphere = UKismetMathLibrary::RandomUnitVector() * FMath::RandRange(40.0f, 1000.0f);
@@ -79,6 +80,7 @@ void AEnemySpawner::SpawnEnemy()
 		if (Enemy)
 		{
 			  MeshComponent = Enemy->GetMesh();
+			UE_LOG(LogTemp, Log, TEXT("Found Enemy"));
 		}
 
 		if (MeshComponent)
@@ -106,10 +108,9 @@ void AEnemySpawner::SpawnEnemy()
 
 			Enemy->SetActorScale3D(FVector(ScaleFactor,ScaleFactor,ScaleFactor));
 		}
-
-		
 		UE_LOG(LogTemp, Log, TEXT("Spawned"));
 	}
+	UE_LOG(LogTemp, Log, TEXT("Could not find Game Intstance"));
 }
 
 //Semi-Random spawn amount determined by how many kills the player has gotten in the last minute.
