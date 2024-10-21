@@ -16,6 +16,8 @@ AEnemySpawner::AEnemySpawner()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	bReplicates = true;
+
 }
 
 // Called when the game starts or when spawned
@@ -71,44 +73,18 @@ void AEnemySpawner::SpawnEnemy()
 		SpawnedEnemyStats.NoiseSensitivity = GenerateNoiseSensitivity(PlayerCharacter->GetTimesDetected());
 		SpawnedEnemyStats.ImmuneToInstaKills = IsImmuneToSpecialKills(PlayerCharacter->GetSpecialKillsPerformedInLastMinute());
 
-		Enemy->SetStats(SpawnedEnemyStats);
-
 		
 		//Scale enemy size and set the meshes new colour and glow. 
 		float ScaleFactor = SpawnedEnemyStats.SizeFactor;
 		USkeletalMeshComponent* MeshComponent = nullptr;
 		if (Enemy)
 		{
-			  MeshComponent = Enemy->GetMesh();
-			UE_LOG(LogTemp, Log, TEXT("Found Enemy"));
+			Enemy->SetStats(SpawnedEnemyStats);
+			Enemy->Multicast_SetColourAndGlow(GenerateColour(SpawnedEnemyStats.Aggression, SpawnedEnemyStats.NoiseSensitivity), SpawnedEnemyStats.Aggression / 100);
+			Enemy->Multicast_SetMeshSize(ScaleFactor);
+			UE_LOG(LogTemp, Log, TEXT("Spawned"));
 		}
-
-		if (MeshComponent)
-		{
-			int32 MaterialCount = MeshComponent->GetNumMaterials();
-			
-			for (int32 i = 0; i < MaterialCount; i++)
-			{
-				UMaterialInterface* Material = MeshComponent->GetMaterial(i);
-				UE_LOG(LogTemp, Log, TEXT("Material %d: %s"), i, *Material->GetName());
-				UMaterialInstanceDynamic* DynamicMaterial = MeshComponent->CreateAndSetMaterialInstanceDynamic(i);
-
-				if (i == 0)
-				{
-					FLinearColor NewColour = GenerateColour(SpawnedEnemyStats.Aggression, SpawnedEnemyStats.NoiseSensitivity);
-					DynamicMaterial->SetVectorParameterValue("BaseColor", NewColour);
-					DynamicMaterial->SetScalarParameterValue("Glow", SpawnedEnemyStats.Aggression / 100);
-				}
-				else if (i == 1)
-				{
-					FLinearColor NewColour = GenerateColour(SpawnedEnemyStats.Aggression, SpawnedEnemyStats.NoiseSensitivity);
-					DynamicMaterial->SetVectorParameterValue("BaseColor", NewColour);
-				}
-			}
-
-			Enemy->SetActorScale3D(FVector(ScaleFactor,ScaleFactor,ScaleFactor));
-		}
-		UE_LOG(LogTemp, Log, TEXT("Spawned"));
+		
 	}
 	UE_LOG(LogTemp, Log, TEXT("Could not find Game Intstance"));
 }

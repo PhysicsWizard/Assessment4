@@ -57,6 +57,26 @@ public:
 	// Sets default values for this character's properties
 	AEnemyCharacter();
 
+	UPROPERTY(Replicated, VisibleAnywhere)
+	FLinearColor EnemyColourProperty;
+
+	UPROPERTY(Replicated, VisibleAnywhere)
+	float EnemyGlowFactor;
+
+	UPROPERTY(Replicated, VisibleAnywhere)
+	float EnemyScaleFactor;
+
+	UFUNCTION(NetMulticast,Reliable)
+	void Multicast_SetColourAndGlow(FLinearColor EnemyColour, float EnemyGlow);
+
+	UFUNCTION(NetMulticast,Reliable)
+	void Multicast_SetMeshSize(float ScaleFactor);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void SetStats(FEnemyStats StatsToSet);
+
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -131,7 +151,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float PathfindingError = 150.0f; // 150 cm from target by default.
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(Replicated, EditAnywhere)
 	FEnemyStats Stats;
 	
 public:	
@@ -140,7 +160,6 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	FEnemyStats GetStats();
-	void SetStats(FEnemyStats StatsToSet);
 
 private:
 	
