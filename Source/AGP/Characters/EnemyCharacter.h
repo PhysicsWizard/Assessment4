@@ -25,6 +25,26 @@ enum class EEnemyState : uint8
 	Evade
 };
 
+USTRUCT(BlueprintType)
+struct FEnemyStats
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere)
+	float Aggression;
+
+	UPROPERTY(EditAnywhere)
+	float SizeFactor;
+
+	UPROPERTY(EditAnywhere)
+	float NoiseSensitivity;
+
+	UPROPERTY(EditAnywhere)
+	bool ImmuneToInstaKills;
+
+	FEnemyStats()
+		: Aggression(10.0f), SizeFactor(1.0f), NoiseSensitivity(1.0f), ImmuneToInstaKills(false){}
+};
+
 /**
  * A class representing the logic for an AI controlled enemy character. 
  */
@@ -36,6 +56,26 @@ class AGP_API AEnemyCharacter : public ABaseCharacter
 public:
 	// Sets default values for this character's properties
 	AEnemyCharacter();
+
+	UPROPERTY(Replicated, VisibleAnywhere)
+	FLinearColor EnemyColourProperty;
+
+	UPROPERTY(Replicated, VisibleAnywhere)
+	float EnemyGlowFactor;
+
+	UPROPERTY(Replicated, VisibleAnywhere)
+	float EnemyScaleFactor;
+
+	UFUNCTION(NetMulticast,Reliable)
+	void Multicast_SetColourAndGlow(FLinearColor EnemyColour, float EnemyGlow);
+
+	UFUNCTION(NetMulticast,Reliable)
+	void Multicast_SetMeshSize(float ScaleFactor);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void SetStats(FEnemyStats StatsToSet);
+
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
 protected:
 	// Called when the game starts or when spawned
@@ -111,10 +151,15 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float PathfindingError = 150.0f; // 150 cm from target by default.
 
+	UPROPERTY(Replicated, EditAnywhere)
+	FEnemyStats Stats;
+	
 public:	
 
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	FEnemyStats GetStats();
 
 private:
 	

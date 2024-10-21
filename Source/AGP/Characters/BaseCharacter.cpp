@@ -128,3 +128,8 @@ void ABaseCharacter::MulticastEquipWeapon_Implementation(bool bEquipWeapon, cons
 	EquipWeaponGraphical(bEquipWeapon);
 }
 
+int ABaseCharacter::GetEnemiesKilledInLastMinute() const
+{
+	return EnemiesKilledInLastMinute;
+}
+
