@@ -95,6 +95,11 @@ bool UWeaponComponent::FireImplementation(const FVector& BulletStart, const FVec
 			if (UHealthComponent* HitCharacterHealth = HitCharacter->GetComponentByClass<UHealthComponent>())
 			{
 				HitCharacterHealth->ApplyDamage(WeaponStats.BaseDamage);
+				if (HitCharacterHealth->IsDead())
+				{
+					ABaseCharacter* Owner = Cast<ABaseCharacter>(GetOwner());
+					Owner->EnemiesKilledInLastMinute++;
+				}
 			}
 			DrawDebugLine(GetWorld(), BulletStart, HitResult.ImpactPoint, FColor::Green, false, 1.0f);
 		}

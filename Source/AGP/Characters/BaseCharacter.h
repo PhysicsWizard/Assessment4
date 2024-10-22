@@ -68,8 +68,7 @@ protected:
 	 */
 	void Fire(const FVector& FireAtLocation);
 
-	UPROPERTY()
-	int EnemiesKilledInLastMinute = 0;
+	
 
 public:	
 	// Called every frame
@@ -77,6 +76,9 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UPROPERTY()
+	int EnemiesKilledInLastMinute = 0;
 
 private:
 	void EquipWeaponImplementation(bool bEquipWeapon, const FWeaponStats& WeaponStats = FWeaponStats());
