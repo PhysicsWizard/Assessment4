@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "BaseCharacter.h"
 #include "PlayerCharacter.h"
+#include "AGP/GoalActionOrientatedPlanning/EnemyAgent.h"
 #include "EnemyCharacter.generated.h"
 
 // Forward declarations to avoid needing to #include files in the header of this class.
@@ -14,20 +15,7 @@ class UPawnSensingComponent;
 class APlayerCharacter;
 class UPathfindingSubsystem;
 
-/**
- * An enum to hold the current state of the enemy character.
- */
-UENUM(BlueprintType)
-enum class EEnemyState : uint8
-{
-	Patrol,
-	Engage,
-	Evade
-};
-
-/**
- * A class representing the logic for an AI controlled enemy character. 
- */
+ 
 UCLASS()
 class AGP_API AEnemyCharacter : public ABaseCharacter
 {
@@ -41,6 +29,13 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY()
+	UEnemyAgent* EnemyAgentComponent;
+
+	/**
+	 * 
+	 */
+	
 	/**
 	 * Will move the character along the CurrentPath or do nothing to the character if the path is empty.
 	 */
@@ -96,14 +91,7 @@ protected:
 	 * An array of vectors representing the current path that the agent is traversing along.
 	 */
 	UPROPERTY(VisibleAnywhere)
-	TArray<FVector> CurrentPath;
-
-	/**
-	 * The current state of the enemy character. This determines which logic to use when executing the finite state machine
-	 * found in the tick function of this enemy character.
-	 */
-	UPROPERTY(EditAnywhere)
-	EEnemyState CurrentState = EEnemyState::Patrol;
+	TArray<FVector> CurrentPath; 
 
 	/**
 	 * Some arbitrary error value for determining how close is close enough before moving onto the next step in the path.
@@ -115,6 +103,8 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	UHealthComponent* GiveHealthComponent();
+	APlayerCharacter* GetSensedCharacter();
 
 private:
 	

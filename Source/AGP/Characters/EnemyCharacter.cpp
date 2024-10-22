@@ -38,7 +38,19 @@ void AEnemyCharacter::BeginPlay()
 		PawnSensingComponent->OnSeePawn.AddDynamic(this, &AEnemyCharacter::OnSensedPawn);
 	}
 	
+	EnemyAgentComponent = NewObject<UEnemyAgent>(this);
+	EnemyAgentComponent->SetTheOwener(this);
 	
+}
+
+UHealthComponent* AEnemyCharacter::GiveHealthComponent()
+{
+	return HealthComponent;
+}
+
+APlayerCharacter* AEnemyCharacter::GetSensedCharacter()
+{
+	return SensedCharacter;
 }
 
 void AEnemyCharacter::MoveAlongPath()
@@ -135,45 +147,7 @@ void AEnemyCharacter::Tick(float DeltaTime)
 	
 	UpdateSight();
 	
-	switch(CurrentState)
-	{
-	case EEnemyState::Patrol:
-		TickPatrol();
-		if (SensedCharacter)
-		{
-			if (HealthComponent->GetCurrentHealthPercentage() >= 0.4f)
-			{
-				CurrentState = EEnemyState::Engage;
-			} else
-			{
-				CurrentState = EEnemyState::Evade;
-			}
-			CurrentPath.Empty();
-		}
-		break;
-	case EEnemyState::Engage:
-		TickEngage();
-		if (HealthComponent->GetCurrentHealthPercentage() < 0.4f)
-		{
-			CurrentPath.Empty();
-			CurrentState = EEnemyState::Evade;
-		} else if (!SensedCharacter)
-		{
-			CurrentState = EEnemyState::Patrol;
-		}
-		break;
-	case EEnemyState::Evade:
-		TickEvade();
-		if (HealthComponent->GetCurrentHealthPercentage() >= 0.4f)
-		{
-			CurrentPath.Empty();
-			CurrentState = EEnemyState::Engage;
-		} else if (!SensedCharacter)
-		{
-			CurrentState = EEnemyState::Patrol;
-		}
-		break;
-	}
+	 
 }
 
 // Called to bind functionality to input

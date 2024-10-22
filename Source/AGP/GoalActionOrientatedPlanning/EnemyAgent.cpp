@@ -9,11 +9,20 @@
 #include "StayAliveGoal.h"
 #include "SuppressPlayerAction.h"
 #include "TakeCoverAction.h"
+#include "AGP/Characters/HealthComponent.h"
 
 
 void UEnemyAgent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	GetBeliefs()->SetCurrentHealthPercentage(HealthComponent->GetCurrentHealthPercentage());
+
+	//Updating the position of a target
+	if(EnemyCharacterComponent->GetSensedCharacter()!=nullptr)
+	{
+		TPair<FString, FVector> Target(TEXT("TargetPosition"), EnemyCharacterComponent->GetSensedCharacter()->GetActorLocation());
+		GetBeliefs()->UpdateBeliefsStateVectors(Target);
+	}
 }
 
 void UEnemyAgent::PerformAction()
@@ -44,6 +53,10 @@ void UEnemyAgent::BeginPlay()
 	AvailableAction.Add(NewObject<UAttackAction>(this));
 	SetUpPerception();
 	Beliefs = NewObject<UEnemyAgentBeliefs>(this);
+	if(EnemyCharacterComponent)
+	{
+		HealthComponent = EnemyCharacterComponent->GiveHealthComponent();
+	}
 }
 
 UEnemyAgentBeliefs* UEnemyAgent::GetBeliefs() const
@@ -54,6 +67,12 @@ UEnemyAgentBeliefs* UEnemyAgent::GetBeliefs()
 {
 	return Cast<UEnemyAgentBeliefs>(Beliefs);
 }
+
+void UEnemyAgent::SetTheOwener(AEnemyCharacter* EnemyCharacter)
+{
+	EnemyCharacterComponent = EnemyCharacter;
+}
+
 
 void UEnemyAgent::SetUpPerception()
 {

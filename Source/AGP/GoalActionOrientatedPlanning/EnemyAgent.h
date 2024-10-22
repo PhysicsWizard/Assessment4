@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h" 
 #include "EnemyAgentBeliefs.h"
+#include "AGP/Characters/EnemyCharacter.h"
 #include "GOAP base/Agent.h"
 #include "EnemyAgent.generated.h"
 
@@ -19,12 +20,18 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void PerformAction() override;
 	bool PlanActions() override;
+	void SetTheOwener(AEnemyCharacter* EnemyCharacter);
 	
 protected:
 	UEnemyAgent();
 	virtual void BeginPlay() override;
 	virtual UEnemyAgentBeliefs* GetBeliefs() const;
-	virtual UEnemyAgentBeliefs* GetBeliefs() override;
+	virtual UEnemyAgentBeliefs* GetBeliefs() override; 
 private:
 	void SetUpPerception();
+
+	UPROPERTY()
+	AEnemyCharacter* EnemyCharacterComponent;
+	UPROPERTY()
+	UHealthComponent* HealthComponent;
 };

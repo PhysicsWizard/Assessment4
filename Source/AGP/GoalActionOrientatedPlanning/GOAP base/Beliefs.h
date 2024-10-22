@@ -27,6 +27,8 @@ public:
 	TMap<FString, FVector> GetBeliefsStateVectors() const;
 	void UpdateBeliefsState(TMap<FString, bool> NewBeliefs);
 	void UpdateBeliefsStateVectors(TMap<FString, FVector> NewBeliefs);
+	void UpdateBeliefsState(const TPair<FString, bool>& NewBeliefs);
+	void UpdateBeliefsStateVectors(const TPair<FString, FVector>& NewBeliefs);
 	bool BeliefsMatchesWorldState( const UWorldState& WorldState)const ;
 	virtual UBeliefs* Clone();
 };

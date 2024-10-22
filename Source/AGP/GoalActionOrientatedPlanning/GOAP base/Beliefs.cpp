@@ -39,6 +39,16 @@ void UBeliefs::UpdateBeliefsStateVectors(TMap<FString, FVector> NewBeliefs)
 	}
 }
 
+void UBeliefs::UpdateBeliefsState(const TPair<FString, bool>& NewBeliefs)
+{
+	BeliefsState.Add(NewBeliefs.Key, NewBeliefs.Value);
+}
+
+void UBeliefs::UpdateBeliefsStateVectors(const TPair<FString, FVector>& NewBeliefs)
+{
+	BeliefsStateVectors.Add(NewBeliefs.Key, NewBeliefs.Value);
+}
+
 bool UBeliefs::BeliefsMatchesWorldState( const UWorldState& WorldState)const 
 {
 	TMap<FString,bool> ActualWorldState = WorldState.GetWorldState();

@@ -13,5 +13,20 @@ UCLASS()
 class AGP_API UEnemyAgentBeliefs : public UBeliefs
 {
 	GENERATED_BODY()
+
+protected:
+	UEnemyAgentBeliefs();
+
+	UPROPERTY()
+	float CurrentHealthPercentage;
+	UPROPERTY()
+	AActor* Target;
 	
+
+public:
+	void SetCurrentHealthPercentage(const float percentage);
+	float GetCurrentHealthPercentage() const;
+
+	void SetTarget(AActor* target);
+	AActor* GetTarget() const;
 };
