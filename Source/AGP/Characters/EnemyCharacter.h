@@ -31,6 +31,8 @@ protected:
 
 	UPROPERTY()
 	UEnemyAgent* EnemyAgentComponent;
+	UPROPERTY()
+	AActor* ItSelf;
 
 	/**
 	 * 

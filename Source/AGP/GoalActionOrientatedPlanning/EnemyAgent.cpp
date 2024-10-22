@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "AGP/GoalActionOrientatedPlanning/EnemyAgent.h"
-
 #include "AttackAction.h"
 #include "EliminateEnemyGoal.h"
 #include "FlankAction.h"
@@ -15,14 +14,7 @@
 void UEnemyAgent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	GetBeliefs()->SetCurrentHealthPercentage(HealthComponent->GetCurrentHealthPercentage());
-
-	//Updating the position of a target
-	if(EnemyCharacterComponent->GetSensedCharacter()!=nullptr)
-	{
-		TPair<FString, FVector> Target(TEXT("TargetPosition"), EnemyCharacterComponent->GetSensedCharacter()->GetActorLocation());
-		GetBeliefs()->UpdateBeliefsStateVectors(Target);
-	}
+	ManageBeliefsAndPerceptions();
 }
 
 void UEnemyAgent::PerformAction()
@@ -68,9 +60,32 @@ UEnemyAgentBeliefs* UEnemyAgent::GetBeliefs()
 	return Cast<UEnemyAgentBeliefs>(Beliefs);
 }
 
+void UEnemyAgent::ManageBeliefsAndPerceptions()
+{
+	//Updating health beliefs
+	GetBeliefs()->SetCurrentHealthPercentage(HealthComponent->GetCurrentHealthPercentage());
+
+	//Updating the position of a target
+	if(EnemyCharacterComponent->GetSensedCharacter()!=nullptr)
+	{
+		TPair<FString, FVector> TargetMemory(TEXT("LastKnownTargetPosition"), EnemyCharacterComponent->GetSensedCharacter()->GetActorLocation());
+		GetBeliefs()->UpdateBeliefsStateVectors(TargetMemory);
+		GetBeliefs()->GetBeliefsState()["WithinRange"] = true;
+	}
+	else
+	{
+		GetBeliefs()->GetBeliefsState()["WithinRange"] = false;
+	}
+}
+
 void UEnemyAgent::SetTheOwener(AEnemyCharacter* EnemyCharacter)
 {
 	EnemyCharacterComponent = EnemyCharacter;
+}
+
+UHealthComponent* UEnemyAgent::GetHealthComponent()
+{
+	return HealthComponent;
 }
 
 

@@ -13,5 +13,8 @@ UCLASS()
 class AGP_API UStayAliveGoal : public UGoal
 {
 	GENERATED_BODY()
+	UStayAliveGoal();
+	virtual bool IsGoalAchieved(const UWorldState& WorldState, const UBeliefs& Beliefs) const override;
+	virtual bool IsGoalRelevant(const UWorldState& WorldState,  UBeliefs& Beliefs) const;
 	
 };

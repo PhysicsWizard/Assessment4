@@ -21,12 +21,15 @@ public:
 	void PerformAction() override;
 	bool PlanActions() override;
 	void SetTheOwener(AEnemyCharacter* EnemyCharacter);
+	UHealthComponent* GetHealthComponent();
+	virtual UEnemyAgentBeliefs* GetBeliefs() const;
+	virtual UEnemyAgentBeliefs* GetBeliefs() override;
 	
 protected:
 	UEnemyAgent();
 	virtual void BeginPlay() override;
-	virtual UEnemyAgentBeliefs* GetBeliefs() const;
-	virtual UEnemyAgentBeliefs* GetBeliefs() override; 
+	void ManageBeliefsAndPerceptions();
+	
 private:
 	void SetUpPerception();
 

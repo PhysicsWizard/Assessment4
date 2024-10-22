@@ -13,5 +13,7 @@ UCLASS()
 class AGP_API UEliminateEnemyGoal : public UGoal
 {
 	GENERATED_BODY()
-	
+	UEliminateEnemyGoal();
+	virtual bool IsGoalAchieved(const UWorldState& WorldState, const UBeliefs& Beliefs) const override;
+	virtual bool IsGoalRelevant(const UWorldState& WorldState,  UBeliefs& Beliefs) const;
 };

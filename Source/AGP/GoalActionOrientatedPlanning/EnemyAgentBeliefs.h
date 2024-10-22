@@ -26,6 +26,9 @@ protected:
 public:
 	void SetCurrentHealthPercentage(const float percentage);
 	float GetCurrentHealthPercentage() const;
+	bool bIsClose()const;
+	bool bInDangerOfDeath() const;
+	bool bHasFullHealth() const;
 
 	void SetTarget(AActor* target);
 	AActor* GetTarget() const;
