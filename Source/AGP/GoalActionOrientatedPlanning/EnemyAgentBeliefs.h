@@ -29,6 +29,8 @@ public:
 	bool bIsClose()const;
 	bool bInDangerOfDeath() const;
 	bool bHasFullHealth() const;
+	bool bWithinHealthRangeTolerance(float tolerance) const;
+	void UpdateBeliefs();
 
 	void SetTarget(AActor* target);
 	AActor* GetTarget() const;

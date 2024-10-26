@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "EnemyCharacter.h"
 #include "EngineUtils.h"
 #include "HealthComponent.h"
@@ -92,6 +91,11 @@ void AEnemyCharacter::TickEngage()
 		CurrentPath = PathfindingSubsystem->GetPath(GetActorLocation(), SensedCharacter->GetActorLocation());
 	}
 	MoveAlongPath();
+
+}
+
+void AEnemyCharacter::TickEngageStationary()
+{
 	if (HasWeapon())
 	{
 		if (WeaponComponent->IsMagazineEmpty())
@@ -105,7 +109,7 @@ void AEnemyCharacter::TickEngage()
 void AEnemyCharacter::TickEvade()
 {
 	// Find the player and return if it can't find it.
-	if (!SensedCharacter) return;
+	//if (!SensedCharacter) return;
 
 	if (CurrentPath.IsEmpty())
 	{

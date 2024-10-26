@@ -10,17 +10,24 @@
 
 UHealAction::UHealAction()
 {
-	cost = 2.0f;
+	cost = 4.0f;
+	Preconditions.Add("TargetSpotted", false);
+	Preconditions.Add("InDangerOfDeath", true);
+	Preconditions.Add("HasFullHealth", false);
+	Preconditions.Add("SafeDistanceToHeal", true);
+	Effects.Add("InDangerOfDeath", false);
+	Effects.Add("HasFullHealth", true);
 }
 
 bool UHealAction::IsActionPossible(const UWorldState& WorldState, const UBeliefs& Beliefs)
 {
 	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(&Beliefs);
-	bool bInDangerOfDeath = EnemyBeliefs->bInDangerOfDeath();
-	bool bNotHealing = !EnemyBeliefs->GetBeliefsState()["IsHealing"];
-	bool bSafeDistanceToHeal = !EnemyBeliefs->bIsClose();
+	const bool bInDangerOfDeath = EnemyBeliefs->bInDangerOfDeath();
+	const bool bNotHealing = !EnemyBeliefs->GetBeliefsState()["IsHealing"];
+	const bool bSafeDistanceToHeal = !EnemyBeliefs->bIsClose();
+	const bool bEnemyNotVisible = EnemyBeliefs->GetTarget() == nullptr;
 
-	return bInDangerOfDeath && bNotHealing && bSafeDistanceToHeal;
+	return bInDangerOfDeath && bNotHealing && bSafeDistanceToHeal && bEnemyNotVisible;
 }
 
 void UHealAction::PerformAction()
@@ -40,9 +47,6 @@ bool UHealAction::IsActionComplete() const
 
 void UHealAction::ApplyEffects(UWorldState& WorldState)
 {
-	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
-	EnemyAgent->GetBeliefs()->GetBeliefsState()["IsHealing"] = false;
-	EnemyAgent->GetBeliefs()->GetBeliefsState()["InDangerOfDeath"] = false;
-	
+	Super::ApplyEffects(WorldState);
 }
 

@@ -58,6 +58,30 @@ bool UEnemyAgentBeliefs::bHasFullHealth() const
 	return bHasFullHealth;
 }
 
+bool UEnemyAgentBeliefs::bWithinHealthRangeTolerance(float tolerance) const
+{
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
+	const float HealthPercentage = EnemyAgent->GetHealthComponent()->GetCurrentHealthPercentage();
+	return HealthPercentage >= tolerance;
+}
+
+void UEnemyAgentBeliefs::UpdateBeliefs()
+{
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(GetOuter()->GetOuter());
+	const float HealthPercentage = EnemyAgent->GetHealthComponent()->GetCurrentHealthPercentage();
+	bool bHasFullHealth = HealthPercentage >=1.0f;
+	GetBeliefsState()["HasFullHealth"] = bHasFullHealth;
+
+	const bool bInDangerOfDeath = HealthPercentage <= 0.31f;
+	GetBeliefsState()["InDangerOfDeath"] = bInDangerOfDeath;
+	
+	float Distance = FVector::Dist(EnemyCharacter->GetActorLocation(), GetBeliefsStateVectors()["LastKnownTargetPosition"]);
+	bool bSafeDistance = Distance <= 300.0f;
+	GetBeliefsState()["SafeDistanceToHeal"] = bSafeDistance;
+
+}
+
 
 void UEnemyAgentBeliefs::SetTarget(AActor* target)
 {

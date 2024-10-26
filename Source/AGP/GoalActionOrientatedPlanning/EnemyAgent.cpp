@@ -8,6 +8,7 @@
 #include "StayAliveGoal.h"
 #include "SuppressPlayerAction.h"
 #include "TakeCoverAction.h"
+#include "AGP/Characters/EnemyCharacter.h"
 #include "AGP/Characters/HealthComponent.h"
 
 
@@ -15,6 +16,7 @@ void UEnemyAgent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	ManageBeliefsAndPerceptions();
+	GetBeliefs()->UpdateBeliefs();
 }
 
 void UEnemyAgent::PerformAction()
@@ -58,6 +60,11 @@ UEnemyAgentBeliefs* UEnemyAgent::GetBeliefs() const
 UEnemyAgentBeliefs* UEnemyAgent::GetBeliefs()
 {
 	return Cast<UEnemyAgentBeliefs>(Beliefs);
+}
+
+AEnemyCharacter* UEnemyAgent::GetEnemyCharacterComponent()
+{
+	return EnemyCharacterComponent;
 }
 
 void UEnemyAgent::ManageBeliefsAndPerceptions()

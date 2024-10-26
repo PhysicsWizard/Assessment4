@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h" 
-#include "EnemyAgentBeliefs.h"
-#include "AGP/Characters/EnemyCharacter.h"
+#include "EnemyAgentBeliefs.h" 
+#include "AGP/Characters/HealthComponent.h"
 #include "GOAP base/Agent.h"
 #include "EnemyAgent.generated.h"
 
+class AEnemyCharacter;
 /**
  * 
  */
@@ -24,6 +25,7 @@ public:
 	UHealthComponent* GetHealthComponent();
 	virtual UEnemyAgentBeliefs* GetBeliefs() const;
 	virtual UEnemyAgentBeliefs* GetBeliefs() override;
+	AEnemyCharacter* GetEnemyCharacterComponent();
 	
 protected:
 	UEnemyAgent();

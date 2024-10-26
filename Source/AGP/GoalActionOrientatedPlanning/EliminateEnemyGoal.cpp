@@ -21,7 +21,7 @@ bool UEliminateEnemyGoal::IsGoalAchieved(const UWorldState& WorldState, const UB
 bool UEliminateEnemyGoal::IsGoalRelevant(const UWorldState& WorldState, UBeliefs& Beliefs) const
 {
     UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(&Beliefs);
-    const bool bHasTarget = EnemyBeliefs->GetTarget();
+    const bool bHasTarget = EnemyBeliefs->GetTarget() != nullptr;
     const bool bWithinRange_ToFire = EnemyBeliefs->GetBeliefsState()["WithinRange"];
     return  bHasTarget && bWithinRange_ToFire;
 }

@@ -43,18 +43,7 @@ protected:
 	 */
 	void MoveAlongPath();
 
-	/**
-	 * Logic that controls the enemy character when in the Patrol state.
-	 */
-	void TickPatrol();
-	/**
-	 * Logic that controls the enemy character when in the Engage state.
-	 */
-	void TickEngage();
-	/**
-	 * Logic that controls the enemy character when in the Evade state.
-	 */
-	void TickEvade();
+
 
 	/**
 	 * A function bound to the UPawnSensingComponent's OnSeePawn event. This will set the SensedCharacter variable
@@ -101,8 +90,12 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float PathfindingError = 150.0f; // 150 cm from target by default.
 
-public:	
-
+public:
+	// reuse these functions to be called in seperate action classes
+	void TickEvade();
+	void TickPatrol();
+	void TickEngage();
+	void TickEngageStationary();
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	UHealthComponent* GiveHealthComponent();
