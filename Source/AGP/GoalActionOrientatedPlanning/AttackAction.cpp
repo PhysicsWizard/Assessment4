@@ -7,6 +7,7 @@
 UAttackAction::UAttackAction()
 {
 	cost = 5.0f;
+	Effects.Add("AttackingTarget", true);
 }
 
 bool UAttackAction::IsActionPossible(const UWorldState& WorldState, const UBeliefs& Beliefs)

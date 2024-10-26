@@ -9,6 +9,9 @@ URetreatAction::URetreatAction()
 {
 	cost = 1.0f;
 	Preconditions.Add("InDangerOfDeath", true);
+	Effects.Add("InDangerOfDeath", false);
+	Effects.Add("TargetSpotted", false);
+	Effects.Add("SafeDistanceToHeal", true);
 }
 
 bool URetreatAction::IsActionPossible(const UWorldState& WorldState, const UBeliefs& Beliefs)

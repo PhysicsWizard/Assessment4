@@ -7,6 +7,7 @@
 UAdvanceAction::UAdvanceAction()
 {
 	cost = 1.0f;
+	Effects.Add("WithinRange", true);
 }
 
 bool UAdvanceAction::IsActionPossible(const UWorldState& WorldState, const UBeliefs& Beliefs)

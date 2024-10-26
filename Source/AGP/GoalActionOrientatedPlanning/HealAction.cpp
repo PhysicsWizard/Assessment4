@@ -47,6 +47,10 @@ bool UHealAction::IsActionComplete() const
 
 void UHealAction::ApplyEffects(UWorldState& WorldState)
 {
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
+	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
+	EnemyBeliefs->GetBeliefsState()["InDangerOfDeath"] = false;
+	EnemyBeliefs->GetBeliefsState()["HasFullHealth"] = true;
 	Super::ApplyEffects(WorldState);
 }
 

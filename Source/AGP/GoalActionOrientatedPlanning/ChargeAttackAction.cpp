@@ -10,6 +10,7 @@ UChargeAttackAction::UChargeAttackAction()
 	Preconditions.Add("AttackingTarget", false);
 	Preconditions.Add("WithinRange", true);
 	Preconditions.Add("HasFullHealth", true);
+	Effects.Add("AttackingTarget", true);
 }
 
 bool UChargeAttackAction::IsActionPossible(const UWorldState& WorldState, const UBeliefs& Beliefs)
