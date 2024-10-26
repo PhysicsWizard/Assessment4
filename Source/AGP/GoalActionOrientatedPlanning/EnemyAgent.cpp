@@ -2,9 +2,12 @@
 
 #include "AGP/GoalActionOrientatedPlanning/EnemyAgent.h"
 #include "AttackAction.h"
+#include "ChargeAttackAction.h"
 #include "EliminateEnemyGoal.h"
 #include "FlankAction.h"
 #include "HealAction.h"
+#include "PatrolAction.h"
+#include "RetreatAction.h"
 #include "StayAliveGoal.h"
 #include "SuppressPlayerAction.h"
 #include "TakeCoverAction.h"
@@ -40,11 +43,17 @@ void UEnemyAgent::BeginPlay()
 	Goals.Add(NewObject<UEliminateEnemyGoal>(this));
 	Goals.Add(NewObject<UStayAliveGoal>(this));
 	AvailableAction.Empty();
-	AvailableAction.Add(NewObject<UFlankAction>(this));
+	AvailableAction.Add(NewObject<UPatrolAction>(this));
 	AvailableAction.Add(NewObject<UHealAction>(this));
+	AvailableAction.Add(NewObject<UAttackAction>(this));
+	AvailableAction.Add(NewObject<UChargeAttackAction>(this));
+	AvailableAction.Add(NewObject<URetreatAction>(this));
+	/*
+	 * Possible do these three not sure yet
+	 *AvailableAction.Add(NewObject<UFlankAction>(this));
 	AvailableAction.Add(NewObject<USuppressPlayerAction>(this));
 	AvailableAction.Add(NewObject<UTakeCoverAction>(this));
-	AvailableAction.Add(NewObject<UAttackAction>(this));
+	*/
 	SetUpPerception();
 	Beliefs = NewObject<UEnemyAgentBeliefs>(this);
 	if(EnemyCharacterComponent)

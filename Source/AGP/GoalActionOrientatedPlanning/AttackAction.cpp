@@ -7,9 +7,6 @@
 UAttackAction::UAttackAction()
 {
 	cost = 5.0f;
-	Preconditions.Add("TargetSpotted", true);
-	Preconditions.Add("AttackingTarget", false);
-	Preconditions.Add("WithinRange", true);
 	Effects.Add("AttackingTarget", true);
 }
 

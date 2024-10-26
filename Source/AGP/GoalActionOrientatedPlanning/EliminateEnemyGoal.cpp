@@ -7,23 +7,26 @@
 UEliminateEnemyGoal::UEliminateEnemyGoal()
 {
     Priority = 3;
-    GoalState.Add("AttackingTarget", true);
 }
 
 bool UEliminateEnemyGoal::IsGoalAchieved(const UWorldState& WorldState, const UBeliefs& Beliefs) const
 {
-    const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(&Beliefs);
-    const bool bTargetNoLongerVisible = !EnemyBeliefs->GetTarget();
-    const bool bOutOfRange = EnemyBeliefs->GetBeliefsState()["WithinRange"];
-    return bTargetNoLongerVisible || bOutOfRange;
+    const bool bPlayerOneDead = WorldState.GetWorldState()["Player_One_Dead"];
+    const bool bPlayerTwoDead = WorldState.GetWorldState()["Player_Two_Dead"];
+    return  bPlayerOneDead && bPlayerTwoDead;
 }
 
 bool UEliminateEnemyGoal::IsGoalRelevant(const UWorldState& WorldState, UBeliefs& Beliefs) const
 {
-    UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(&Beliefs);
-    const bool bHasTarget = EnemyBeliefs->GetTarget() != nullptr;
-    const bool bWithinRange_ToFire = EnemyBeliefs->GetBeliefsState()["WithinRange"];
-    return  bHasTarget && bWithinRange_ToFire;
+    const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(&Beliefs);
+    const bool bNotAttackingTarget = !EnemyBeliefs->GetBeliefsState()["AttackingTarget"];
+    const bool bNotInDangerOfDeath = EnemyBeliefs->GetBeliefsState()["InDangerOfDeath"];
+    const bool bPlayerOneAlive = !WorldState.GetWorldState()["Player_One_Dead"];
+    const bool bPlayerTwoAlive = !WorldState.GetWorldState()["Player_Two_Dead"];
+    return bNotInDangerOfDeath
+            && bNotAttackingTarget
+            && bPlayerOneAlive
+            && bPlayerTwoAlive;
 }
 
 

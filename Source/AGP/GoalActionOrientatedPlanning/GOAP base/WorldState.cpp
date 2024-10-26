@@ -83,13 +83,8 @@ void UWorldState::PrintWorldStates() const
 
 UWorldState::UWorldState()
 {
-	States.Add("GoldTaken", false);
-	States.Add("ThiefVisible", false);
-	States.Add("GuardVisible", false);
-	States.Add("Escaped", false);
-	VectorStates.Add("ThiefLastKnownPosition", FVector::ZeroVector);
-	VectorStates.Add("PatrolAgentPosition", FVector::ZeroVector);
-	VectorStates.Add("ThiefAgentLocation", FVector::ZeroVector); 
+	States.Add("Player_One_Dead", false);
+	States.Add("Player_Two_Dead", false);
 	
 	//PrintWorldStates();
 }

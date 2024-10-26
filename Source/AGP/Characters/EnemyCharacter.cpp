@@ -91,7 +91,14 @@ void AEnemyCharacter::TickEngage()
 		CurrentPath = PathfindingSubsystem->GetPath(GetActorLocation(), SensedCharacter->GetActorLocation());
 	}
 	MoveAlongPath();
-
+	if (HasWeapon())
+	{
+		if (WeaponComponent->IsMagazineEmpty())
+		{
+			Reload();
+		}
+		Fire(SensedCharacter->GetActorLocation());
+	}
 }
 
 void AEnemyCharacter::TickEngageStationary()
@@ -104,6 +111,17 @@ void AEnemyCharacter::TickEngageStationary()
 		}
 		Fire(SensedCharacter->GetActorLocation());
 	}
+}
+
+void AEnemyCharacter::TickAdanceToTarget()
+{
+	if (!SensedCharacter) return;
+	
+	if (CurrentPath.IsEmpty())
+	{
+		CurrentPath = PathfindingSubsystem->GetPath(GetActorLocation(), SensedCharacter->GetActorLocation());
+	}
+	MoveAlongPath();
 }
 
 void AEnemyCharacter::TickEvade()
