@@ -30,10 +30,10 @@ public:
 protected:
 	UEnemyAgent();
 	virtual void BeginPlay() override;
-	void ManageBeliefsAndPerceptions();
+	void ManageHealthBeliefs();
+	void ManageSensedCharacters();
 	
 private:
-	void SetUpPerception();
 
 	UPROPERTY()
 	AEnemyCharacter* EnemyCharacterComponent;

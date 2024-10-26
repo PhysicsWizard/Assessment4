@@ -7,7 +7,6 @@
 UAttackAction::UAttackAction()
 {
 	cost = 5.0f;
-	Effects.Add("AttackingTarget", true);
 }
 
 bool UAttackAction::IsActionPossible(const UWorldState& WorldState, const UBeliefs& Beliefs)
@@ -39,5 +38,7 @@ bool UAttackAction::IsActionComplete() const
 
 void UAttackAction::ApplyEffects(UWorldState& WorldState)
 {
-	Super::ApplyEffects(WorldState);
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
+	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
+	EnemyBeliefs->GetBeliefsState()["AttackingTarget"] = true;
 }

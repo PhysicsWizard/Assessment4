@@ -18,7 +18,8 @@
 void UEnemyAgent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	ManageBeliefsAndPerceptions();
+	ManageHealthBeliefs();
+	ManageSensedCharacters();
 	GetBeliefs()->UpdateBeliefs();
 }
 
@@ -54,7 +55,6 @@ void UEnemyAgent::BeginPlay()
 	AvailableAction.Add(NewObject<USuppressPlayerAction>(this));
 	AvailableAction.Add(NewObject<UTakeCoverAction>(this));
 	*/
-	SetUpPerception();
 	Beliefs = NewObject<UEnemyAgentBeliefs>(this);
 	if(EnemyCharacterComponent)
 	{
@@ -70,13 +70,12 @@ UEnemyAgentBeliefs* UEnemyAgent::GetBeliefs()
 {
 	return Cast<UEnemyAgentBeliefs>(Beliefs);
 }
-
 AEnemyCharacter* UEnemyAgent::GetEnemyCharacterComponent()
 {
 	return EnemyCharacterComponent;
 }
 
-void UEnemyAgent::ManageBeliefsAndPerceptions()
+void UEnemyAgent::ManageHealthBeliefs()
 {
 	//Updating health beliefs
 	GetBeliefs()->SetCurrentHealthPercentage(HealthComponent->GetCurrentHealthPercentage());
@@ -94,6 +93,27 @@ void UEnemyAgent::ManageBeliefsAndPerceptions()
 	}
 }
 
+void UEnemyAgent::ManageSensedCharacters()
+{
+	const AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(GetOuter()->GetOuter());
+	if(const ACharacter* Character = EnemyCharacterComponent->GetSensedCharacter())
+	{
+		if(FVector::Dist(EnemyCharacter->GetActorLocation(), Character->GetActorLocation()) > 300.0f)
+		{
+			GetBeliefs()->GetBeliefsState()["WithinRange"] = false;
+		}
+		GetBeliefs()->GetBeliefsState()["WithinRange"] = false;
+		GetBeliefs()->GetBeliefsState()["TargetSpotted"] = true;
+		GetBeliefs()->GetBeliefsStateVectors()["TargetPosition"] = Character->GetActorLocation();
+		GetBeliefs()->GetBeliefsStateVectors()["LastKnownTargetPosition"] = Character->GetActorLocation();
+	}
+	else
+	{
+		GetBeliefs()->GetBeliefsState()["TargetSpotted"] = false;
+		GetBeliefs()->GetBeliefsStateVectors()["TargetPosition"] = FVector::ZeroVector;
+	}
+}
+
 void UEnemyAgent::SetTheOwener(AEnemyCharacter* EnemyCharacter)
 {
 	EnemyCharacterComponent = EnemyCharacter;
@@ -104,37 +124,3 @@ UHealthComponent* UEnemyAgent::GetHealthComponent()
 	return HealthComponent;
 }
 
-
-void UEnemyAgent::SetUpPerception()
-{
-	/*
-	Sensor = NewObject<UPatrolAgentSensor>(GetOwner(), UPatrolAgentSensor::StaticClass(), TEXT("Sensor"));
-	Sensor->SetOwnerAgent(this);
-	Sensor->RegisterComponent();
-	if(!Sensor)
-		UE_LOG(LogTemp, Warning, TEXT("No sensor")); 
-	if (UPatrolAgentSensor* PatrolSensor = Cast<UPatrolAgentSensor>(Sensor))
-	{
-		PatrolSensor->SetDetectionRange(500.0f); // Now you can call SetDetectionRange
-	}
-
-	PerceptionComponent = NewObject<UAIPerceptionComponent>(GetOwner(), UAIPerceptionComponent::StaticClass(), TEXT("PerceptionComponent"));
-	PerceptionComponent->RegisterComponent();
-	SightConfig = NewObject<UAISenseConfig_Sight>(this, TEXT("SightConfig"));
-	SightConfig->SightRadius = DetectionRange;
-	SightConfig->LoseSightRadius = 1000.0f;
-	SightConfig->PeripheralVisionAngleDegrees = 110.0f;
-	SightConfig->SetMaxAge(5.0f);
-	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
-	SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
-	SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
-
-	PerceptionComponent->ConfigureSense(*SightConfig);
-	PerceptionComponent->SetDominantSense(UAISense_Sight::StaticClass());
-	PerceptionComponent->OnPerceptionUpdated.AddDynamic(this, &UPatrolAgent::OnPerceptionUpdated);
-	StimuliSourceComponent = NewObject<UAIPerceptionStimuliSourceComponent>(GetOwner(), UAIPerceptionStimuliSourceComponent::StaticClass(), TEXT("StimuliSourceComponent"));
-	StimuliSourceComponent->RegisterComponent();
-	StimuliSourceComponent->RegisterForSense(UAISense_Sight::StaticClass());
-	StimuliSourceComponent->RegisterWithPerceptionSystem();
-	*/
-}

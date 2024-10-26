@@ -10,7 +10,6 @@ UChargeAttackAction::UChargeAttackAction()
 	Preconditions.Add("AttackingTarget", false);
 	Preconditions.Add("WithinRange", true);
 	Preconditions.Add("HasFullHealth", true);
-	Effects.Add("AttackingTarget", true);
 }
 
 bool UChargeAttackAction::IsActionPossible(const UWorldState& WorldState, const UBeliefs& Beliefs)
@@ -43,5 +42,7 @@ bool UChargeAttackAction::IsActionComplete() const
 
 void UChargeAttackAction::ApplyEffects(UWorldState& WorldState)
 {
-	Super::ApplyEffects(WorldState);
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
+	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
+	EnemyBeliefs->GetBeliefsState()["AttackingTarget"] = true;
 }

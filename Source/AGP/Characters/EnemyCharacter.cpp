@@ -83,7 +83,7 @@ void AEnemyCharacter::TickPatrol()
 
 void AEnemyCharacter::TickEngage()
 {
-	
+	float DeltaTime = GetWorld()->GetDeltaSeconds();
 	if (!SensedCharacter) return;
 	
 	if (CurrentPath.IsEmpty())
@@ -97,20 +97,32 @@ void AEnemyCharacter::TickEngage()
 		{
 			Reload();
 		}
-		Fire(SensedCharacter->GetActorLocation());
+		if(TimeSinceLastShot >= 0.1f)
+		{
+			Fire(SensedCharacter->GetActorLocation());
+			TimeSinceLastShot = 0.0f;
+		}
 	}
+	TimeSinceLastShot += DeltaTime;
 }
 
 void AEnemyCharacter::TickEngageStationary()
 {
+	float DeltaTime = GetWorld()->GetDeltaSeconds();
+	if (!SensedCharacter) return;
 	if (HasWeapon())
 	{
 		if (WeaponComponent->IsMagazineEmpty())
 		{
 			Reload();
 		}
-		Fire(SensedCharacter->GetActorLocation());
+		if(TimeSinceLastShot >= 0.1f)
+		{
+			Fire(SensedCharacter->GetActorLocation());
+			TimeSinceLastShot = 0.0f;
+		}
 	}
+	TimeSinceLastShot += DeltaTime;
 }
 
 void AEnemyCharacter::TickAdanceToTarget()
@@ -141,7 +153,6 @@ void AEnemyCharacter::OnSensedPawn(APawn* SensedActor)
 	if (APlayerCharacter* Player = Cast<APlayerCharacter>(SensedActor))
 	{
 		SensedCharacter = Player;
-		//UE_LOG(LogTemp, Display, TEXT("Sensed Player"))
 	}
 }
 
@@ -153,7 +164,6 @@ void AEnemyCharacter::UpdateSight()
 		if (!PawnSensingComponent->HasLineOfSightTo(SensedCharacter))
 		{
 			SensedCharacter = nullptr;
-			//UE_LOG(LogTemp, Display, TEXT("Lost Player"))
 		}
 	}
 }

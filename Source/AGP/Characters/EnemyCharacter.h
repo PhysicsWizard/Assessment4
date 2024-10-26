@@ -109,5 +109,6 @@ private:
 	 * @return A pointer to one APlayerCharacter actor in the world.
 	 */
 	APlayerCharacter* FindPlayer() const;
+	float TimeSinceLastShot = 0.0f;
 
 };
