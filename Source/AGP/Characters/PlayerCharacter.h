@@ -54,7 +54,9 @@ protected:
 	UPROPERTY()
 	UPlayerCharacterHUD* PlayerHUD;
 	
-	
+	float TimesDetected;
+	int SpecialKillsPerformedInLastMinute;
+	float MinuteTimer = 60.0f;
 
 public:	
 	// Called every frame
@@ -62,6 +64,10 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+	void IncreaseTimesDetected();
+	float GetTimesDetected();
+	int GetSpecialKillsPerformedInLastMinute();
 	
 private:
 	

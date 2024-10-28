@@ -33,6 +33,8 @@ public:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	void OnDeath();
+	
+	int GetEnemiesKilledInLastMinute() const;
 
 protected:
 	// Called when the game starts or when spawned
@@ -66,12 +68,17 @@ protected:
 	 */
 	void Fire(const FVector& FireAtLocation);
 
+	
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UPROPERTY()
+	int EnemiesKilledInLastMinute = 0;
 
 private:
 	void EquipWeaponImplementation(bool bEquipWeapon, const FWeaponStats& WeaponStats = FWeaponStats());

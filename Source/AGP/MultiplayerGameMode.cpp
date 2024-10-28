@@ -23,3 +23,9 @@ void AMultiplayerGameMode::RespawnPlayer(AController* Controller)
 	}
 	
 }
+
+UClass* AMultiplayerGameMode::GetEnemyClass() const
+{
+	return EnemyClass.Get();
+}
+
