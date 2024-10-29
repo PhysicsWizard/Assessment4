@@ -5,6 +5,7 @@
 #include "HealthComponent.h"
 #include "PlayerCharacter.h"
 #include "AGP/Pathfinding/PathfindingSubsystem.h"
+#include "Net/UnrealNetwork.h"
 #include "Perception/PawnSensingComponent.h"
 
 // Sets default values
@@ -40,6 +41,17 @@ void AEnemyCharacter::BeginPlay()
 	EnemyAgentComponent = NewObject<UEnemyAgent>(this);
 	EnemyAgentComponent->SetTheOwener(this);
 	
+}
+
+void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	//Replicate these properties.
+	DOREPLIFETIME(AEnemyCharacter, EnemyColourProperty);
+	DOREPLIFETIME(AEnemyCharacter, EnemyGlowFactor);
+	DOREPLIFETIME(AEnemyCharacter, EnemyScaleFactor);
+	DOREPLIFETIME(AEnemyCharacter, Stats);
 }
 
 UHealthComponent* AEnemyCharacter::GiveHealthComponent()
@@ -202,5 +214,51 @@ APlayerCharacter* AEnemyCharacter::FindPlayer() const
 		UE_LOG(LogTemp, Error, TEXT("Unable to find the Player Character in the world."))
 	}
 	return Player;
+}
+
+
+void AEnemyCharacter::Multicast_SetColourAndGlow_Implementation(FLinearColor EnemyColour, float EnemyGlow)
+{
+	USkeletalMeshComponent* EnemyMesh = GetMesh();
+
+	if (EnemyMesh)
+	{
+		int32 MaterialCount = EnemyMesh->GetNumMaterials();
+			
+		for (int32 i = 0; i < MaterialCount; i++)
+		{
+			UMaterialInterface* Material = EnemyMesh->GetMaterial(i);
+			UE_LOG(LogTemp, Log, TEXT("Material %d: %s"), i, *Material->GetName());
+			UMaterialInstanceDynamic* DynamicMaterial = EnemyMesh->CreateAndSetMaterialInstanceDynamic(i);
+
+			if (i == 0)
+			{
+				DynamicMaterial->SetVectorParameterValue("BaseColor", EnemyColour);
+				DynamicMaterial->SetScalarParameterValue("Glow", EnemyGlow);
+			}
+			else if (i == 1)
+			{
+				DynamicMaterial->SetVectorParameterValue("BaseColor", EnemyColour);
+			}
+		}
+		UE_LOG(LogTemp, Log, TEXT("Colour Set"));
+	}
+	UE_LOG(LogTemp, Log, TEXT("No Mesh Found"));
+}
+
+void AEnemyCharacter::Multicast_SetMeshSize_Implementation(float ScaleFactor)
+{
+	SetActorScale3D(FVector(ScaleFactor,ScaleFactor,ScaleFactor));
+}
+
+
+void AEnemyCharacter::SetStats_Implementation(FEnemyStats StatsToSet)
+{
+	Stats = StatsToSet;
+}
+
+FEnemyStats AEnemyCharacter::GetStats()
+{
+	return Stats;
 }
 

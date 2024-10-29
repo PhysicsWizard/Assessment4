@@ -15,6 +15,25 @@ class UPawnSensingComponent;
 class APlayerCharacter;
 class UPathfindingSubsystem;
 
+USTRUCT(BlueprintType)
+struct FEnemyStats
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere)
+	float Aggression;
+
+	UPROPERTY(EditAnywhere)
+	float SizeFactor;
+
+	UPROPERTY(EditAnywhere)
+	float NoiseSensitivity;
+
+	UPROPERTY(EditAnywhere)
+	bool ImmuneToInstaKills;
+
+	FEnemyStats()
+		: Aggression(10.0f), SizeFactor(1.0f), NoiseSensitivity(1.0f), ImmuneToInstaKills(false){}
+};
  
 UCLASS()
 class AGP_API AEnemyCharacter : public ABaseCharacter
@@ -24,6 +43,27 @@ class AGP_API AEnemyCharacter : public ABaseCharacter
 public:
 	// Sets default values for this character's properties
 	AEnemyCharacter();
+
+	UPROPERTY(Replicated, VisibleAnywhere)
+	FLinearColor EnemyColourProperty;
+
+	UPROPERTY(Replicated, VisibleAnywhere)
+	float EnemyGlowFactor;
+
+	UPROPERTY(Replicated, VisibleAnywhere)
+	float EnemyScaleFactor;
+
+	UFUNCTION(NetMulticast,Reliable)
+	void Multicast_SetColourAndGlow(FLinearColor EnemyColour, float EnemyGlow);
+
+	UFUNCTION(NetMulticast,Reliable)
+	void Multicast_SetMeshSize(float ScaleFactor);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void SetStats(FEnemyStats StatsToSet);
+
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -90,6 +130,10 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float PathfindingError = 150.0f; // 150 cm from target by default.
 
+	UPROPERTY(Replicated, EditAnywhere)
+	FEnemyStats Stats;
+
+	
 public:
 	// reuse these functions to be called in seperate action classes
 	void TickEvade();
@@ -101,6 +145,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	UHealthComponent* GiveHealthComponent();
 	APlayerCharacter* GetSensedCharacter();
+	FEnemyStats GetStats();
 
 private:
 	
