@@ -66,6 +66,8 @@ void AEnemySpawner::SpawnEnemy()
 		//Spawn Enemy and generate a stats struct for it using helper methods.
 		AEnemyCharacter* Enemy = GetWorld()->SpawnActor<AEnemyCharacter>(GameInstance->GetEnemyClass(), SpawnPosition, FRotator::ZeroRotator, SpawnParameters);
 		Enemy->SpawnDefaultController();
+		//TODO: RESOLVE COMPILE ISSUES BELLOW
+		/*
 		FEnemyStats SpawnedEnemyStats;
 
 		SpawnedEnemyStats.Aggression = GenerateAggression(PlayerCharacter->GetEnemiesKilledInLastMinute());
@@ -84,6 +86,7 @@ void AEnemySpawner::SpawnEnemy()
 			Enemy->Multicast_SetMeshSize(ScaleFactor);
 			UE_LOG(LogTemp, Log, TEXT("Spawned"));
 		}
+		*/
 		
 	}
 	UE_LOG(LogTemp, Log, TEXT("Could not find Game Intstance"));
