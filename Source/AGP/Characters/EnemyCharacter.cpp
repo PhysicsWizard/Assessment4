@@ -243,7 +243,10 @@ void AEnemyCharacter::Multicast_SetColourAndGlow_Implementation(FLinearColor Ene
 		}
 		UE_LOG(LogTemp, Log, TEXT("Colour Set"));
 	}
-	UE_LOG(LogTemp, Log, TEXT("No Mesh Found"));
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("No Mesh Found"));
+	}
 }
 
 void AEnemyCharacter::Multicast_SetMeshSize_Implementation(float ScaleFactor)

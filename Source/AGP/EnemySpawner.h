@@ -25,7 +25,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	float SpawnTimer = 0.0f;
+	float SpawnTimer = 5.0f;
 
 	APlayerCharacter* PlayerCharacter;
 
@@ -38,6 +38,9 @@ protected:
 	float GenerateAggression(float EnemiesKilledInput);
 	float GenerateNoiseSensitivity(float DetectionInput);
 	bool IsImmuneToSpecialKills(int SpecialKillsPerformed);
+
+	TArray<FVector> PossibleSpawnLocations;
+	void PopulateSpawnLocations();
 
 public:	
 	// Called every frame

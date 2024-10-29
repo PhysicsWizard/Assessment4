@@ -9,6 +9,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Pathfinding/PathfindingSubsystem.h"
 
 // Sets default values
 AEnemySpawner::AEnemySpawner()
@@ -30,6 +31,7 @@ void AEnemySpawner::BeginPlay()
 	//Set the spawn parameters to ignore collision; this is so that spawns always happen. Also Get a reference to the player. 
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));
+	PopulateSpawnLocations();
 	UE_LOG(LogTemp, Log, TEXT("Started"));
 }
 
@@ -43,9 +45,17 @@ void AEnemySpawner::Tick(float DeltaTime)
 	{
 		for (int8 i = 0; i < GetEnemySpawnAmount(PlayerCharacter->GetEnemiesKilledInLastMinute()); i++)
 		{
-			SpawnEnemy();	
+			if (HasAuthority())
+			{
+				SpawnEnemy();
+			}	
 		}
 		SpawnTimer += 5.0f;
+	}
+
+	if (PossibleSpawnLocations.IsEmpty())
+	{
+		PopulateSpawnLocations();
 	}
 
 	SpawnTimer -= DeltaTime;
@@ -53,17 +63,16 @@ void AEnemySpawner::Tick(float DeltaTime)
 
 void AEnemySpawner::SpawnEnemy()
 {
+
+	
 	//Check if using the correct game instance; this is used to get the enemy class for spawning.
 	if (const AMultiplayerGameMode* GameInstance = Cast<AMultiplayerGameMode>(GetWorld()->GetAuthGameMode()))
 	{
 		UE_LOG(LogTemp, Log, TEXT("Found GameInstance"));
 		//Find a spawn location around the player. Then Make sure it is above ground.
-		FVector PlayerLocation = PlayerCharacter->GetActorLocation();
-		FVector PointInSphere = UKismetMathLibrary::RandomUnitVector() * FMath::RandRange(40.0f, 1000.0f);
-		
-		
-		FVector SpawnPosition = PointInSphere + PlayerLocation;
-		SpawnPosition.Z = 500.0f;
+		FVector SpawnPosition =
+			PossibleSpawnLocations[FMath::RandRange(0, PossibleSpawnLocations.Num()-1)];
+		SpawnPosition.Z += 50.0f;
 
 		//Spawn Enemy and generate a stats struct for it using helper methods.
 		AEnemyCharacter* Enemy = GetWorld()->SpawnActor<AEnemyCharacter>(GameInstance->GetEnemyClass(), SpawnPosition, FRotator::ZeroRotator, SpawnParameters);
@@ -74,11 +83,9 @@ void AEnemySpawner::SpawnEnemy()
 		SpawnedEnemyStats.SizeFactor = FMath::RandRange(0.5f, 2.5f);
 		SpawnedEnemyStats.NoiseSensitivity = GenerateNoiseSensitivity(PlayerCharacter->GetTimesDetected());
 		SpawnedEnemyStats.ImmuneToInstaKills = IsImmuneToSpecialKills(PlayerCharacter->GetSpecialKillsPerformedInLastMinute());
-
 		
 		//Scale enemy size and set the meshes new colour and glow. 
 		float ScaleFactor = SpawnedEnemyStats.SizeFactor;
-		USkeletalMeshComponent* MeshComponent = nullptr;
 		if (Enemy)
 		{
 			Enemy->SetStats(SpawnedEnemyStats);
@@ -88,7 +95,11 @@ void AEnemySpawner::SpawnEnemy()
 		}
 		
 	}
-	UE_LOG(LogTemp, Log, TEXT("Could not find Game Intstance"));
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("Could not find Game Intstance"));
+	}
+	
 }
 
 //Semi-Random spawn amount determined by how many kills the player has gotten in the last minute.
@@ -255,6 +266,16 @@ bool AEnemySpawner::IsImmuneToSpecialKills(int SpecialKillsPerformed)
 
 	return false;
 }
+
+void AEnemySpawner::PopulateSpawnLocations()
+{
+	PossibleSpawnLocations.Empty();
+	if (const UPathfindingSubsystem* PathfindingSubsystem = GetWorld()->GetSubsystem<UPathfindingSubsystem>())
+	{
+		PossibleSpawnLocations = PathfindingSubsystem->GetWaypointPositions();
+	}
+}
+
 
 
 
