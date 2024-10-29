@@ -28,4 +28,3 @@ UClass* AMultiplayerGameMode::GetEnemyClass() const
 {
 	return EnemyClass.Get();
 }
-
