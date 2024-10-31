@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h" 
 #include "EnemyAgentBeliefs.h" 
+#include "AGP/Characters/EnemyCharacter.h"
 #include "AGP/Characters/HealthComponent.h"
 #include "GOAP base/Agent.h"
 #include "EnemyAgent.generated.h"
@@ -26,6 +27,7 @@ public:
 	virtual UEnemyAgentBeliefs* GetBeliefs() const;
 	virtual UEnemyAgentBeliefs* GetBeliefs() override;
 	AEnemyCharacter* GetEnemyCharacterComponent();
+	FEnemyStats* GetEnemyStats();
 	
 protected:
 	UEnemyAgent();

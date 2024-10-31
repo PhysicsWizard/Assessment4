@@ -216,7 +216,6 @@ APlayerCharacter* AEnemyCharacter::FindPlayer() const
 	return Player;
 }
 
-
 void AEnemyCharacter::Multicast_SetColourAndGlow_Implementation(FLinearColor EnemyColour, float EnemyGlow)
 {
 	USkeletalMeshComponent* EnemyMesh = GetMesh();
@@ -249,6 +248,7 @@ void AEnemyCharacter::Multicast_SetColourAndGlow_Implementation(FLinearColor Ene
 	}
 }
 
+
 void AEnemyCharacter::Multicast_SetMeshSize_Implementation(float ScaleFactor)
 {
 	SetActorScale3D(FVector(ScaleFactor,ScaleFactor,ScaleFactor));
@@ -260,8 +260,14 @@ void AEnemyCharacter::SetStats_Implementation(FEnemyStats StatsToSet)
 	Stats = StatsToSet;
 }
 
-FEnemyStats AEnemyCharacter::GetStats()
+FEnemyStats* AEnemyCharacter::GetStats()
+{
+	return &Stats;
+}
+
+FEnemyStats AEnemyCharacter::GetStats() const
 {
 	return Stats;
 }
+
 

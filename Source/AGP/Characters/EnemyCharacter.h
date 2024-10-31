@@ -145,7 +145,8 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	UHealthComponent* GiveHealthComponent();
 	APlayerCharacter* GetSensedCharacter();
-	FEnemyStats GetStats();
+	FEnemyStats GetStats() const;
+	FEnemyStats* GetStats();
 
 private:
 	

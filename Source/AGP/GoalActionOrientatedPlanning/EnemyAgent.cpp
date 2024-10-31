@@ -124,3 +124,9 @@ UHealthComponent* UEnemyAgent::GetHealthComponent()
 	return HealthComponent;
 }
 
+FEnemyStats* UEnemyAgent::GetEnemyStats()
+{
+	return GetEnemyCharacterComponent()->GetStats();
+}
+
+
