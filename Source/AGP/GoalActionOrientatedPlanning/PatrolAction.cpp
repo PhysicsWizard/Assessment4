@@ -11,9 +11,19 @@ UPatrolAction::UPatrolAction()
 
 bool UPatrolAction::IsActionPossible(const UWorldState& WorldState, const UBeliefs& Beliefs)
 {
-	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(&Beliefs);
-	const bool bNoTargetSpotted = EnemyBeliefs->GetBeliefsState()["TargetSpotted"];
-	const bool bNotInDangerOfDeath = !EnemyBeliefs->GetBeliefsState()["InDangerOfDeath"];
+	UEnemyAgentBeliefs* EnemyBeliefs = nullptr;
+	if(UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter()))
+	{
+		EnemyBeliefs = EnemyAgent->GetBeliefs();
+	}
+	if (!EnemyBeliefs)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("EnemyAgent Beliefs null!"));
+		return false; // Null check
+	}
+	const auto& BeliefsState = EnemyBeliefs->GetBeliefsState();
+	const bool bNoTargetSpotted = BeliefsState.Contains("TargetSpotted") && !BeliefsState["TargetSpotted"];
+	const bool bNotInDangerOfDeath = BeliefsState.Contains("InDangerOfDeath") && !BeliefsState["InDangerOfDeath"];
 	return bNoTargetSpotted && bNotInDangerOfDeath;
 }
 

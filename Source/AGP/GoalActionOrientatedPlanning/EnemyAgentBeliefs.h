@@ -16,7 +16,6 @@ class AGP_API UEnemyAgentBeliefs : public UBeliefs
 
 protected:
 	UEnemyAgentBeliefs();
-
 	UPROPERTY()
 	float CurrentHealthPercentage;
 	UPROPERTY()

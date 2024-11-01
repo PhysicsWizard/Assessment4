@@ -56,10 +56,7 @@ void UEnemyAgent::BeginPlay()
 	AvailableAction.Add(NewObject<UTakeCoverAction>(this));
 	*/
 	Beliefs = NewObject<UEnemyAgentBeliefs>(this);
-	if(EnemyCharacterComponent)
-	{
-		HealthComponent = EnemyCharacterComponent->GiveHealthComponent();
-	}
+	HealthComponent = EnemyCharacterComponent->GiveHealthComponent();
 }
 
 UEnemyAgentBeliefs* UEnemyAgent::GetBeliefs() const

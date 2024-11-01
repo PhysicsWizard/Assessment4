@@ -15,7 +15,8 @@ UChargeAttackAction::UChargeAttackAction()
 
 bool UChargeAttackAction::IsActionPossible(const UWorldState& WorldState, const UBeliefs& Beliefs)
 {
-	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(&Beliefs);
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
+	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
 	const bool bTargetSpotted = EnemyBeliefs->GetBeliefsState()["TargetSpotted"];
 	const bool bWithinFiringRange = EnemyBeliefs->GetBeliefsState()["WithinRange"];
 	const bool bAttackingTarget = !EnemyBeliefs->GetBeliefsState()["AttackingTarget"];

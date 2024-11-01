@@ -89,6 +89,11 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+UHealthComponent* ABaseCharacter::GetHealthComponent()
+{
+	return HealthComponent;
+}
+
 void ABaseCharacter::EquipWeaponImplementation(bool bEquipWeapon, const FWeaponStats& WeaponStats)
 {
 	// Create or remove the weapon component depending on whether we are trying to equip a weapon and we
