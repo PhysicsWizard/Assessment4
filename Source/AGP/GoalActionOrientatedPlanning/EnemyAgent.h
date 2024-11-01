@@ -12,7 +12,7 @@ class AEnemyCharacter;
 /**
  * 
  */
-UCLASS()
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class AGP_API UEnemyAgent : public UAgent
 {
 	GENERATED_BODY()
