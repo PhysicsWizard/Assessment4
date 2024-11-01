@@ -4,9 +4,11 @@
 #include "WeaponComponent.h"
 
 #include "BaseCharacter.h"
+#include "EnemyCharacter.h"
 #include "HealthComponent.h"
 #include "PlayerCharacter.h"
 #include "AGP/EnemySpawner.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values for this component's properties
@@ -91,15 +93,29 @@ bool UWeaponComponent::FireImplementation(const FVector& BulletStart, const FVec
 	if (GetWorld()->LineTraceSingleByChannel(HitResult, BulletStart, AccuracyAdjustedFireAt, ECC_WorldStatic, QueryParams))
 	{
 		OutHitLocation = HitResult.ImpactPoint;
-		if (ABaseCharacter* HitCharacter = Cast<ABaseCharacter>(HitResult.GetActor()))
+		if (AEnemyCharacter* HitCharacter = Cast<AEnemyCharacter>(HitResult.GetActor()))
 		{
+			bool DoInstaKill = false;
 			if (UHealthComponent* HitCharacterHealth = HitCharacter->GetComponentByClass<UHealthComponent>())
 			{
-				HitCharacterHealth->ApplyDamage(WeaponStats.BaseDamage);
+				if (HitCharacterHealth->GetCurrentHealthPercentage() >= 1.0f)
+				{
+					UE_LOG(LogTemp, Log, TEXT("InstaKillChance : %f"), HitCharacter->GetStats()->InstaKillChance);
+					DoInstaKill = UKismetMathLibrary::RandomBoolWithWeight(HitCharacter->GetStats()->InstaKillChance);
+				}
+
+				if (DoInstaKill)
+				{
+					HitCharacterHealth->ApplyDamage(HitCharacterHealth->GetCurrentHealth());
+					UE_LOG(LogTemp, Log, TEXT("InstaKill"));
+				}
+				else
+				{
+					HitCharacterHealth->ApplyDamage(WeaponStats.BaseDamage);
+				}
 				if (HitCharacterHealth->IsDead())
 				{
-					ABaseCharacter* Owner = Cast<ABaseCharacter>(GetOwner());
-					Owner->GetEnemySpawner()->IncreaseKill(false);
+					HitCharacter->GetEnemySpawner()->IncreaseKill(DoInstaKill);
 				}
 			}
 			DrawDebugLine(GetWorld(), BulletStart, HitResult.ImpactPoint, FColor::Green, false, 1.0f);

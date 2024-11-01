@@ -82,7 +82,7 @@ void AEnemySpawner::SpawnEnemy()
 		SpawnedEnemyStats.Aggression = GenerateAggression(PlayerKillsInLastMinute);
 		SpawnedEnemyStats.SizeFactor = FMath::RandRange(0.5f, 2.5f);
 		SpawnedEnemyStats.NoiseSensitivity = GenerateNoiseSensitivity(TimesPlayerDetected);
-		SpawnedEnemyStats.ImmuneToInstaKills = IsImmuneToSpecialKills(PlayerSpecialKillsInLastMinute);
+		SpawnedEnemyStats.InstaKillChance = GetInstaKillChance(PlayerSpecialKillsInLastMinute);
 		
 		//Scale enemy size and set the meshes new colour and glow. 
 		float ScaleFactor = SpawnedEnemyStats.SizeFactor;
@@ -257,35 +257,35 @@ float AEnemySpawner::GenerateNoiseSensitivity(float DetectionInput)
 		return NoiseSensitivity;
 }
 
-//Semi-Random chance for the enemy to be immune to special kills (functionally not implemented as I am only concerned with visuals) determined by number of special kills player has gotten in last minute.
-bool AEnemySpawner::IsImmuneToSpecialKills(int SpecialKillsPerformed)
+//Chance for player to insta-kill an enemy; increases the more special kills player gets, so that there is a higher chacne of killing the increased spawned enemies.
+float AEnemySpawner::GetInstaKillChance(int SpecialKillsPerformed)
 {
 	if (SpecialKillsPerformed <= 0)
 	{
-		return false;
+		return 0.05f;
 	}
 
 	if (SpecialKillsPerformed == 1)
 	{
-		return UKismetMathLibrary::RandomBoolWithWeight(0.05f);
+		return 0.1f;
 	}
 
 	if (SpecialKillsPerformed == 2)
 	{
-		return UKismetMathLibrary::RandomBoolWithWeight(0.1f);
+		return 0.15f;
 	}
 	
 	if (SpecialKillsPerformed == 3)
 	{
-		return UKismetMathLibrary::RandomBoolWithWeight(0.25f);
+		return 0.2f;
 	}
 
 	if (SpecialKillsPerformed >= 4)
 	{
-		return UKismetMathLibrary::RandomBoolWithWeight(0.3f);
+		return 0.3f;
 	}
 
-	return false;
+	return 0.05f;
 }
 
 void AEnemySpawner::PopulateSpawnLocations()

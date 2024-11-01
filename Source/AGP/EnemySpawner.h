@@ -37,7 +37,7 @@ protected:
 
 	float GenerateAggression(float EnemiesKilledInput);
 	float GenerateNoiseSensitivity(float DetectionInput);
-	bool IsImmuneToSpecialKills(int SpecialKillsPerformed);
+	float GetInstaKillChance(int SpecialKillsPerformed);
 
 	TArray<FVector> PossibleSpawnLocations;
 	void PopulateSpawnLocations();

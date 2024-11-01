@@ -29,10 +29,10 @@ struct FEnemyStats
 	float NoiseSensitivity;
 
 	UPROPERTY(EditAnywhere)
-	bool ImmuneToInstaKills;
+	float InstaKillChance;
 
 	FEnemyStats()
-		: Aggression(10.0f), SizeFactor(1.0f), NoiseSensitivity(1.0f), ImmuneToInstaKills(false){}
+		: Aggression(10.0f), SizeFactor(1.0f), NoiseSensitivity(1.0f), InstaKillChance(0.05f){}
 };
  
 UCLASS()
