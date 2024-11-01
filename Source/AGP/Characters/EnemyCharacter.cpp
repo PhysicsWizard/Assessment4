@@ -38,19 +38,11 @@ void AEnemyCharacter::BeginPlay()
 	{
 		PawnSensingComponent->OnSeePawn.AddDynamic(this, &AEnemyCharacter::OnSensedPawn);
 	}
-	if (!HealthComponent)
-	{
-		HealthComponent = FindComponentByClass<UHealthComponent>();
-	}
-	
+	 
 	EnemyAgentComponent = FindComponentByClass<UEnemyAgent>();
 	EnemyAgentComponent->SetTheOwener(this);
 }
 
-UHealthComponent* AEnemyCharacter::GiveHealthComponent()
-{
-	return HealthComponent;
-}
 
 APlayerCharacter* AEnemyCharacter::GetSensedCharacter()
 {

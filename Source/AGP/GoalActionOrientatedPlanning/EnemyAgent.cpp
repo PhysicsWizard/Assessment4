@@ -18,6 +18,7 @@
 void UEnemyAgent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	UE_LOG(LogTemp, Log, TEXT("Performing Tick..."));
 	ManageHealthBeliefs();
 	ManageSensedCharacters();
 	GetBeliefs()->UpdateBeliefs();
@@ -40,12 +41,7 @@ UEnemyAgent::UEnemyAgent()
 void UEnemyAgent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (AEnemyCharacter* OwnerCharacter = Cast<AEnemyCharacter>(GetOwner()))
-	{
-		SetTheOwener(OwnerCharacter);
-	}
-	
+	UE_LOG(LogTemp, Log, TEXT("Performing Begin..."));
 	Goals.Empty();
 	Goals.Add(NewObject<UEliminateEnemyGoal>(this));
 	Goals.Add(NewObject<UStayAliveGoal>(this));
@@ -62,10 +58,7 @@ void UEnemyAgent::BeginPlay()
 	AvailableAction.Add(NewObject<UTakeCoverAction>(this));
 	*/
 	Beliefs = NewObject<UEnemyAgentBeliefs>(this);
-	if (!HealthComponent)
-	{
-		HealthComponent = GetOwner()->FindComponentByClass<UHealthComponent>();
-	}
+	HealthComponent = EnemyCharacterComponent->GiveHealthComponent();
 }
 
 UEnemyAgentBeliefs* UEnemyAgent::GetBeliefs() const

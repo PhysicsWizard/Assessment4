@@ -44,18 +44,17 @@ void UAgent::BeginPlay()
 void UAgent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	UE_LOG(LogTemp, Log, TEXT("Performing..."));
 	if(GoalAchieved())
 	{
 		PlanActions();
 	}
 	else
 	{
-		//UE_LOG(LogTemp, Log, TEXT("Performing..."));
+		 
 		PerformAction();
 	}
-	// ...
- 
-
+	// ... 
 }
 
 bool UAgent::PlanActions()

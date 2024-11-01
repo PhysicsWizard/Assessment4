@@ -26,6 +26,9 @@ public:
 	virtual UEnemyAgentBeliefs* GetBeliefs() const;
 	virtual UEnemyAgentBeliefs* GetBeliefs() override;
 	AEnemyCharacter* GetEnemyCharacterComponent();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Components")
+	UHealthComponent* HealthComponent;
 	
 protected:
 	UEnemyAgent();
@@ -37,6 +40,5 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	AEnemyCharacter* EnemyCharacterComponent;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	UHealthComponent* HealthComponent;
+	 
 };

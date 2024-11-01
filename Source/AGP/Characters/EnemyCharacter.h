@@ -98,8 +98,7 @@ public:
 	void TickEngageStationary();
 	void TickAdanceToTarget();
 	virtual void Tick(float DeltaTime) override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	UHealthComponent* GiveHealthComponent();
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override; 
 	APlayerCharacter* GetSensedCharacter();
 
 private:
