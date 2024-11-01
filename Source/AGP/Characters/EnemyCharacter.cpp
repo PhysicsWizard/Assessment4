@@ -16,6 +16,8 @@ AEnemyCharacter::AEnemyCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("Pawn Sensing Component");
 	//HealthComponent = FindComponentByClass<UHealthComponent>();
+	EnemyAgentComponent = CreateDefaultSubobject<UEnemyAgent>(TEXT("EnemyAgent"));
+	EnemyAgentComponent->SetTheOwener(this);
 }
 
 // Called when the game starts or when spawned
@@ -38,9 +40,6 @@ void AEnemyCharacter::BeginPlay()
 	{
 		PawnSensingComponent->OnSeePawn.AddDynamic(this, &AEnemyCharacter::OnSensedPawn);
 	}
-	 
-	EnemyAgentComponent = FindComponentByClass<UEnemyAgent>();
-	EnemyAgentComponent->SetTheOwener(this);
 }
 
 
