@@ -40,6 +40,12 @@ UEnemyAgent::UEnemyAgent()
 void UEnemyAgent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (AEnemyCharacter* OwnerCharacter = Cast<AEnemyCharacter>(GetOwner()))
+	{
+		SetTheOwener(OwnerCharacter);
+	}
+	
 	Goals.Empty();
 	Goals.Add(NewObject<UEliminateEnemyGoal>(this));
 	Goals.Add(NewObject<UStayAliveGoal>(this));
@@ -56,7 +62,10 @@ void UEnemyAgent::BeginPlay()
 	AvailableAction.Add(NewObject<UTakeCoverAction>(this));
 	*/
 	Beliefs = NewObject<UEnemyAgentBeliefs>(this);
-	HealthComponent = EnemyCharacterComponent->GiveHealthComponent();
+	if (!HealthComponent)
+	{
+		HealthComponent = GetOwner()->FindComponentByClass<UHealthComponent>();
+	}
 }
 
 UEnemyAgentBeliefs* UEnemyAgent::GetBeliefs() const
@@ -75,7 +84,14 @@ AEnemyCharacter* UEnemyAgent::GetEnemyCharacterComponent()
 void UEnemyAgent::ManageHealthBeliefs()
 {
 	//Updating health beliefs
-	GetBeliefs()->SetCurrentHealthPercentage(HealthComponent->GetCurrentHealthPercentage());
+	if(HealthComponent)
+	{
+		GetBeliefs()->SetCurrentHealthPercentage(HealthComponent->GetCurrentHealthPercentage());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("HealthComponent is NUll"));
+	}
 
 	//Updating the position of a target
 	if(EnemyCharacterComponent->GetSensedCharacter()!=nullptr)
@@ -118,6 +134,23 @@ void UEnemyAgent::SetTheOwener(AEnemyCharacter* EnemyCharacter)
 
 UHealthComponent* UEnemyAgent::GetHealthComponent()
 {
-	return HealthComponent;
+	if(EnemyCharacterComponent)
+	{
+		if (!HealthComponent)
+		{
+			if(UHealthComponent* healthComponent = EnemyCharacterComponent->GiveHealthComponent())
+			{
+				HealthComponent = healthComponent;
+				if(!HealthComponent)
+				{
+					HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+					HealthComponent->RegisterComponent();
+				}
+			}
+		}
+		return HealthComponent;
+	}
+	UE_LOG(LogTemp, Log, TEXT("HealthComponent is NUll"));
+	return nullptr;
 }
 

@@ -45,7 +45,8 @@ bool UEnemyAgentBeliefs::bInDangerOfDeath() const
 {
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
 	AEnemyCharacter* EnemyCharacter = EnemyAgent->GetEnemyCharacterComponent();
-	const float HealthPercentage = EnemyCharacter->GetHealthComponent()->GetCurrentHealthPercentage();
+	//const float HealthPercentage = EnemyCharacter->GiveHealthComponent()->GetCurrentHealthPercentage();
+	const float HealthPercentage = EnemyAgent->GetHealthComponent()->GetCurrentHealthPercentage();
 	const bool bInDangerOfDeath = HealthPercentage <= 0.31f;
 	GetBeliefsState()["InDangerOfDeath"] = bInDangerOfDeath;
 	return bInDangerOfDeath;
@@ -55,7 +56,8 @@ bool UEnemyAgentBeliefs::bHasFullHealth() const
 {
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
 	AEnemyCharacter* EnemyCharacter = EnemyAgent->GetEnemyCharacterComponent();
-	const float HealthPercentage = EnemyCharacter->GetHealthComponent()->GetCurrentHealthPercentage();
+	//const float HealthPercentage = EnemyCharacter->GiveHealthComponent()->GetCurrentHealthPercentage();
+	const float HealthPercentage = EnemyAgent->GetHealthComponent()->GetCurrentHealthPercentage();
 	bool bHasFullHealth = HealthPercentage >=1.0f;
 	GetBeliefsState()["HasFullHealth"] = bHasFullHealth;
 	return bHasFullHealth;
@@ -65,7 +67,8 @@ bool UEnemyAgentBeliefs::bWithinHealthRangeTolerance(float tolerance) const
 {
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
 	AEnemyCharacter* EnemyCharacter = EnemyAgent->GetEnemyCharacterComponent();
-	const float HealthPercentage = EnemyCharacter->GetHealthComponent()->GetCurrentHealthPercentage();
+	//const float HealthPercentage = EnemyCharacter->GiveHealthComponent()->GetCurrentHealthPercentage();
+	const float HealthPercentage = EnemyAgent->GetHealthComponent()->GetCurrentHealthPercentage();
 	return HealthPercentage >= tolerance;
 }
 
@@ -73,7 +76,8 @@ void UEnemyAgentBeliefs::UpdateBeliefs()
 {
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
 	AEnemyCharacter* EnemyCharacter =  EnemyAgent->GetEnemyCharacterComponent();
-	const float HealthPercentage = EnemyCharacter->GetHealthComponent()->GetCurrentHealthPercentage();
+	//const float HealthPercentage = EnemyCharacter->GiveHealthComponent()->GetCurrentHealthPercentage();
+	const float HealthPercentage = EnemyAgent->GetHealthComponent()->GetCurrentHealthPercentage();
 	const bool bHasFullHealth = HealthPercentage >=1.0f;
 	GetBeliefsState()["HasFullHealth"] = bHasFullHealth;
 

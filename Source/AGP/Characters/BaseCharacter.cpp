@@ -12,17 +12,14 @@ ABaseCharacter::ABaseCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 	BulletStartPosition = CreateDefaultSubobject<USceneComponent>("Bullet Start");
 	BulletStartPosition->SetupAttachment(GetRootComponent());
-	HealthComponent = CreateDefaultSubobject<UHealthComponent>("Health Component");
 }
 
 // Called when the game starts or when spawned
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void ABaseCharacter::Fire(const FVector& FireAtLocation)
@@ -88,11 +85,7 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
-
-UHealthComponent* ABaseCharacter::GetHealthComponent()
-{
-	return HealthComponent;
-}
+ 
 
 void ABaseCharacter::EquipWeaponImplementation(bool bEquipWeapon, const FWeaponStats& WeaponStats)
 {

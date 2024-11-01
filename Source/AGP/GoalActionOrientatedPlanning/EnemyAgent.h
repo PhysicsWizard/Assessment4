@@ -35,8 +35,8 @@ protected:
 	
 private:
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	AEnemyCharacter* EnemyCharacterComponent;
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UHealthComponent* HealthComponent;
 };

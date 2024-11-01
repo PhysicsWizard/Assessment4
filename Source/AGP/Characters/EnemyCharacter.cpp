@@ -4,6 +4,8 @@
 #include "EngineUtils.h"
 #include "HealthComponent.h"
 #include "PlayerCharacter.h"
+#include "Components/SceneComponent.h"
+#include "GameFramework/Actor.h"
 #include "AGP/Pathfinding/PathfindingSubsystem.h"
 #include "Perception/PawnSensingComponent.h"
 
@@ -12,8 +14,8 @@ AEnemyCharacter::AEnemyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("Pawn Sensing Component");
+	//HealthComponent = FindComponentByClass<UHealthComponent>();
 }
 
 // Called when the game starts or when spawned
@@ -36,10 +38,13 @@ void AEnemyCharacter::BeginPlay()
 	{
 		PawnSensingComponent->OnSeePawn.AddDynamic(this, &AEnemyCharacter::OnSensedPawn);
 	}
+	if (!HealthComponent)
+	{
+		HealthComponent = FindComponentByClass<UHealthComponent>();
+	}
 	
-	EnemyAgentComponent = NewObject<UEnemyAgent>(this);
+	EnemyAgentComponent = FindComponentByClass<UEnemyAgent>();
 	EnemyAgentComponent->SetTheOwener(this);
-	
 }
 
 UHealthComponent* AEnemyCharacter::GiveHealthComponent()

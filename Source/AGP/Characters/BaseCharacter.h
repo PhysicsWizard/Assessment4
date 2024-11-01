@@ -52,7 +52,7 @@ protected:
 	 * A component that holds information about the health of the character. This component has functions
 	 * for damaging the character and healing the character.
 	 */
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UHealthComponent* HealthComponent;
 
 	/**
@@ -75,8 +75,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	UHealthComponent* GetHealthComponent();
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override; 
 
 	UPROPERTY()
 	int EnemiesKilledInLastMinute = 0;
