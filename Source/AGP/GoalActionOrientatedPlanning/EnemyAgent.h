@@ -4,16 +4,18 @@
 
 #include "CoreMinimal.h" 
 #include "EnemyAgentBeliefs.h" 
-#include "AGP/Characters/EnemyCharacter.h"
 #include "AGP/Characters/HealthComponent.h"
 #include "GOAP base/Agent.h"
 #include "EnemyAgent.generated.h"
 
+
+struct FEnemyStats;
 class AEnemyCharacter;
 /**
  * 
  */
 UCLASS()
+
 class AGP_API UEnemyAgent : public UAgent
 {
 	GENERATED_BODY()
@@ -22,7 +24,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void PerformAction() override;
 	bool PlanActions() override;
-	void SetTheOwener(AEnemyCharacter* EnemyCharacter);
+	void SetTheOwner(AEnemyCharacter* EnemyCharacter);
 	UHealthComponent* GetHealthComponent();
 	virtual UEnemyAgentBeliefs* GetBeliefs() const;
 	virtual UEnemyAgentBeliefs* GetBeliefs() override;

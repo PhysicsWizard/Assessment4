@@ -3,6 +3,7 @@
 
 #include "AGP/GoalActionOrientatedPlanning/EnemyAgentBeliefs.h"
 
+#include "EnemyAgent.h"
 #include "AGP/Characters/EnemyCharacter.h"
 #include "AGP/Characters/HealthComponent.h"
 
@@ -35,7 +36,7 @@ bool UEnemyAgentBeliefs::bIsClose() const
 {
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(GetOuter()->GetOuter());
 	float Distance = FVector::Dist(EnemyCharacter->GetActorLocation(), GetBeliefsStateVectors()["LastKnownTargetPosition"]);
-	bool bSafeDistance = Distance <= 300.0f;
+	bool bSafeDistance = Distance <= EnemyCharacter->GetNoiseSenitivity();
 	GetBeliefsState()["SafeDistanceToHeal"] = bSafeDistance;
 	return bSafeDistance;
 }
@@ -44,7 +45,8 @@ bool UEnemyAgentBeliefs::bInDangerOfDeath() const
 {
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
 	const float HealthPercentage = EnemyAgent->GetHealthComponent()->GetCurrentHealthPercentage();
-	const bool bInDangerOfDeath = HealthPercentage <= 0.31f;
+	const bool bInDangerOfDeath = HealthPercentage <= Cast<AEnemyCharacter>(EnemyAgent->GetOuter())->GetAggressionClamped();
+	UE_LOG(LogTemp, Log, TEXT("Enemy Aggression Clamped: %f"),Cast<AEnemyCharacter>(GetOuter()->GetOuter())->GetAggressionClamped() );
 	GetBeliefsState()["InDangerOfDeath"] = bInDangerOfDeath;
 	return bInDangerOfDeath;
 }

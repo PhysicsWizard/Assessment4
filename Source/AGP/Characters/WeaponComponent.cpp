@@ -6,6 +6,7 @@
 #include "BaseCharacter.h"
 #include "HealthComponent.h"
 #include "PlayerCharacter.h"
+#include "AGP/EnemySpawner.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values for this component's properties
@@ -98,7 +99,7 @@ bool UWeaponComponent::FireImplementation(const FVector& BulletStart, const FVec
 				if (HitCharacterHealth->IsDead())
 				{
 					ABaseCharacter* Owner = Cast<ABaseCharacter>(GetOwner());
-					Owner->EnemiesKilledInLastMinute++;
+					Owner->GetEnemySpawner()->IncreaseKill(false);
 				}
 			}
 			DrawDebugLine(GetWorld(), BulletStart, HitResult.ImpactPoint, FColor::Green, false, 1.0f);

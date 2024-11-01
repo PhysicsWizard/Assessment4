@@ -82,8 +82,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	//Reset Kills Each minute.
 	if (MinuteTimer <= 0)
 	{
-		SpecialKillsPerformedInLastMinute = 0;
-		EnemiesKilledInLastMinute = 0;
+		EnemySpawner->ResetKillsAndDetected();
 		MinuteTimer = 60.0f;
 	}
 
@@ -134,7 +133,7 @@ void APlayerCharacter::FireWeapon(const FInputActionValue& Value)
 
 void APlayerCharacter::IncreaseTimesDetected()
 {
-	TimesDetected++;
+	EnemySpawner->IncreasePlayerDetected();
 }
 
 float APlayerCharacter::GetTimesDetected()

@@ -114,7 +114,7 @@ void UEnemyAgent::ManageSensedCharacters()
 	}
 }
 
-void UEnemyAgent::SetTheOwener(AEnemyCharacter* EnemyCharacter)
+void UEnemyAgent::SetTheOwner(AEnemyCharacter* EnemyCharacter)
 {
 	EnemyCharacterComponent = EnemyCharacter;
 }

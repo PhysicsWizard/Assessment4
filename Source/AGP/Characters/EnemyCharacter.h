@@ -6,7 +6,6 @@
 #include "GameFramework/Character.h"
 #include "BaseCharacter.h"
 #include "PlayerCharacter.h"
-#include "AGP/GoalActionOrientatedPlanning/EnemyAgent.h"
 #include "EnemyCharacter.generated.h"
 
 // Forward declarations to avoid needing to #include files in the header of this class.
@@ -14,6 +13,7 @@
 class UPawnSensingComponent;
 class APlayerCharacter;
 class UPathfindingSubsystem;
+class UEnemyAgent;
 
 USTRUCT(BlueprintType)
 struct FEnemyStats
@@ -59,9 +59,16 @@ public:
 	UFUNCTION(NetMulticast,Reliable)
 	void Multicast_SetMeshSize(float ScaleFactor);
 
+
 	UFUNCTION(NetMulticast, Reliable)
 	void SetStats(FEnemyStats StatsToSet);
 
+	UFUNCTION()
+	float GetAggressionClamped();
+
+	UFUNCTION()
+	float GetNoiseSenitivity();
+	
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
 
@@ -73,10 +80,6 @@ protected:
 	UEnemyAgent* EnemyAgentComponent;
 	UPROPERTY()
 	AActor* ItSelf;
-
-	/**
-	 * 
-	 */
 	
 	/**
 	 * Will move the character along the CurrentPath or do nothing to the character if the path is empty.
@@ -130,6 +133,9 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float PathfindingError = 150.0f; // 150 cm from target by default.
 
+	/**
+	 * Enemy Stats stored as struct.
+	 */
 	UPROPERTY(Replicated, EditAnywhere)
 	FEnemyStats Stats;
 

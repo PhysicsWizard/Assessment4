@@ -4,6 +4,7 @@
 #include "EngineUtils.h"
 #include "HealthComponent.h"
 #include "PlayerCharacter.h"
+#include "AGP/GoalActionOrientatedPlanning/EnemyAgent.h"
 #include "AGP/Pathfinding/PathfindingSubsystem.h"
 #include "Net/UnrealNetwork.h"
 #include "Perception/PawnSensingComponent.h"
@@ -39,7 +40,7 @@ void AEnemyCharacter::BeginPlay()
 	}
 	
 	EnemyAgentComponent = NewObject<UEnemyAgent>(this);
-	EnemyAgentComponent->SetTheOwener(this);
+	EnemyAgentComponent->SetTheOwner(this);
 	
 }
 
@@ -269,5 +270,18 @@ FEnemyStats AEnemyCharacter::GetStats() const
 {
 	return Stats;
 }
+
+float AEnemyCharacter::GetAggressionClamped()
+{
+	float ClampedAggression = FMath::Clamp(GetStats()->Aggression, 10.0f, 90.0f);
+	return 0.3f - (ClampedAggression - 10.0f / 80.0f) * 0.2f;
+}
+
+float AEnemyCharacter::GetNoiseSenitivity()
+{
+	return Stats.NoiseSensitivity;
+}
+
+
 
 

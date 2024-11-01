@@ -79,17 +79,17 @@ void AEnemySpawner::SpawnEnemy()
 		Enemy->SpawnDefaultController();
 		FEnemyStats SpawnedEnemyStats;
 
-		SpawnedEnemyStats.Aggression = GenerateAggression(PlayerCharacter->GetEnemiesKilledInLastMinute());
+		SpawnedEnemyStats.Aggression = GenerateAggression(PlayerKillsInLastMinute);
 		SpawnedEnemyStats.SizeFactor = FMath::RandRange(0.5f, 2.5f);
-		SpawnedEnemyStats.NoiseSensitivity = GenerateNoiseSensitivity(PlayerCharacter->GetTimesDetected());
-		SpawnedEnemyStats.ImmuneToInstaKills = IsImmuneToSpecialKills(PlayerCharacter->GetSpecialKillsPerformedInLastMinute());
+		SpawnedEnemyStats.NoiseSensitivity = GenerateNoiseSensitivity(TimesPlayerDetected);
+		SpawnedEnemyStats.ImmuneToInstaKills = IsImmuneToSpecialKills(PlayerSpecialKillsInLastMinute);
 		
 		//Scale enemy size and set the meshes new colour and glow. 
 		float ScaleFactor = SpawnedEnemyStats.SizeFactor;
 		if (Enemy)
 		{
 			Enemy->SetStats(SpawnedEnemyStats);
-			Enemy->Multicast_SetColourAndGlow(GenerateColour(SpawnedEnemyStats.Aggression, SpawnedEnemyStats.NoiseSensitivity), SpawnedEnemyStats.Aggression / 100);
+			Enemy->Multicast_SetColourAndGlow(GenerateColour(SpawnedEnemyStats.Aggression, SpawnedEnemyStats.NoiseSensitivity), SpawnedEnemyStats.NoiseSensitivity / 200);
 			Enemy->Multicast_SetMeshSize(ScaleFactor);
 			UE_LOG(LogTemp, Log, TEXT("Spawned"));
 		}
@@ -100,6 +100,27 @@ void AEnemySpawner::SpawnEnemy()
 		UE_LOG(LogTemp, Log, TEXT("Could not find Game Intstance"));
 	}
 	
+}
+
+void AEnemySpawner::IncreaseKill(bool bIsSpecialKill)
+{
+	PlayerKillsInLastMinute++;
+	if (bIsSpecialKill)
+	{
+		PlayerSpecialKillsInLastMinute++;
+	}
+}
+
+void AEnemySpawner::IncreasePlayerDetected()
+{
+	TimesPlayerDetected++;
+}
+
+void AEnemySpawner::ResetKillsAndDetected()
+{
+	PlayerKillsInLastMinute = 0;
+	PlayerSpecialKillsInLastMinute = 0;
+	TimesPlayerDetected = 0;
 }
 
 //Semi-Random spawn amount determined by how many kills the player has gotten in the last minute.
@@ -207,28 +228,28 @@ float AEnemySpawner::GenerateNoiseSensitivity(float DetectionInput)
 
 	if (0 < DetectionInput && 2 >= DetectionInput)
 	{
-		NoiseSensitivity = FMath::RandRange(11.0f, 30.0f);
+		NoiseSensitivity = FMath::RandRange(250.0f, 300.0f);
 		UE_LOG(LogTemp, Log, TEXT("Enemy NoiseSensitivity: %F"), NoiseSensitivity);
 		return NoiseSensitivity;
 	}
 
 	if (2 < DetectionInput && 5 >= DetectionInput)
 	{
-		NoiseSensitivity = FMath::RandRange(31.0f, 60.0f);
+		NoiseSensitivity = FMath::RandRange(301.0f, 400.0f);
 		UE_LOG(LogTemp, Log, TEXT("Enemy NoiseSensitivity: %F"), NoiseSensitivity);
 		return NoiseSensitivity;
 	}
 	
 	if (5 < DetectionInput && 10 >= DetectionInput)
 	{
-		NoiseSensitivity = FMath::RandRange(61.0f, 85.0f);
+		NoiseSensitivity = FMath::RandRange(401.0f, 500.0f);
 		UE_LOG(LogTemp, Log, TEXT("Enemy NoiseSensitivity: %F"), NoiseSensitivity);
 		return NoiseSensitivity;
 	}
 
 	if (DetectionInput > 10)
 	{
-		NoiseSensitivity =  FMath::RandRange(86.0f, 100.0f);
+		NoiseSensitivity =  FMath::RandRange(501.0f, 600.0f);
 		UE_LOG(LogTemp, Log, TEXT("Enemy NoiseSensitivity: %F"), NoiseSensitivity);
 		return NoiseSensitivity;
 	}
