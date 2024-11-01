@@ -172,7 +172,7 @@ void AEnemyCharacter::Tick(float DeltaTime)
 
 	// DO NOTHING UNLESS IT IS ON THE SERVER
 	if (GetLocalRole() != ROLE_Authority) return;
-	
+	UE_LOG(LogTemp, Log, TEXT("ticking..."));
 	UpdateSight();
 	
 	 
