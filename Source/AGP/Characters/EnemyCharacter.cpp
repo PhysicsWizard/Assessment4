@@ -146,6 +146,15 @@ void AEnemyCharacter::TickAdanceToTarget()
 	MoveAlongPath();
 }
 
+void AEnemyCharacter::TickGoToLocation( FVector& location)
+{
+	if (CurrentPath.IsEmpty())
+	{
+		CurrentPath = PathfindingSubsystem->GetPath(GetActorLocation(), location);
+	}
+	MoveAlongPath();
+}
+
 void AEnemyCharacter::OnSeePawnDetected(APawn* SeenPawn)
 {
 	if(SeenPawn)

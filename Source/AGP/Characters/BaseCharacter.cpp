@@ -67,6 +67,10 @@ void ABaseCharacter::OnDeath()
 			GameMode->RespawnPlayer(GetController());
 		}
 	}
+	if(AEnemyCharacter* PlayerCharacter = Cast<AEnemyCharacter>(this))
+	{
+		PlayerCharacter->Destroy();
+	}
 }
 
 // Called every frame

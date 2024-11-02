@@ -16,14 +16,6 @@ bool UAttackAction::IsActionPossible(const UWorldState& WorldState, const UBelie
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter()); 
 	const bool bTargetSpotted = EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"];
 	const bool bWithinFiringRange = EnemyAgent->GetBeliefs()->GetBeliefsState()["WithinRange"];
-	//const bool bAttackingTarget = EnemyBeliefs->GetBeliefsState()["AttackingTarget"];
-
-	UE_LOG(LogTemp, Log, TEXT("AttackAction - TargetSpotted?: %s, WithinFiringRange?: %s"),
-bTargetSpotted ? TEXT("true") : TEXT("false"),
-bWithinFiringRange ? TEXT("true") : TEXT("false"));
-
-	
-	//return bTargetSpotted && bWithinFiringRange && bAttackingTarget;
 	return bTargetSpotted && bWithinFiringRange;
 }
 
@@ -39,9 +31,8 @@ bool UAttackAction::IsActionComplete() const
 	const bool bNoTarget = !EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"];
 	const bool bOutOfRange = !EnemyAgent->GetBeliefs()->GetBeliefsState()["WithinRange"];
 	const bool bInDangerOfDeath = EnemyAgent->GetBeliefs()->GetBeliefsState()["InDangerOfDeath"];
-	const bool bCantEngage = bNoTarget && bOutOfRange;
-	 
-	if (bCantEngage || bInDangerOfDeath)
+	
+	if (bNoTarget || bOutOfRange|| bInDangerOfDeath)
 	{
 		// Reset AttackingTarget to false
 		EnemyAgent->GetBeliefs()->GetBeliefsState()["AttackingTarget"] = false;

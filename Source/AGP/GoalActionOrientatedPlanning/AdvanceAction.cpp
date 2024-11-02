@@ -16,32 +16,38 @@ bool UAdvanceAction::IsActionPossible(const UWorldState& WorldState, const UBeli
 {
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter()); 
 	//check if a target is directly spotted
-	const bool bTargetSpotted = EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"];
-	const bool bWithinRange = EnemyAgent->GetBeliefs()->GetBeliefsState()["WithinRange"];
+	const bool bNoTargetSpotted = !EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"];
+	const bool bLastKnownPosition =
+		EnemyAgent->GetBeliefs()->GetBeliefsStateVectors()["LastKnownTargetPosition"] != FVector::ZeroVector;
 
-	return bTargetSpotted && !bWithinRange;
+	return bNoTargetSpotted && !bLastKnownPosition;
 }
 
 void UAdvanceAction::PerformAction()
 {
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter()); 
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(GetOuter()->GetOuter());
-	EnemyCharacter->TickAdanceToTarget();
+	EnemyCharacter->TickGoToLocation(EnemyAgent->GetBeliefs()->GetBeliefsStateVectors()["LastKnownTargetPosition"]);
 	
 }
 
 bool UAdvanceAction::IsActionComplete() const
 {
-	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter()); 
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(GetOuter()->GetOuter());
+	const float DistanceToLastKnownPosition =
+		FVector::Dist(EnemyAgent->GetBeliefs()->GetBeliefsStateVectors()["LastKnownTargetPosition"],
+		EnemyCharacter->GetActorLocation());
+	
 	//check if a target is directly spotted
-	const bool bTargetSpotted = EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"];
-	const bool bWithinRange = EnemyAgent->GetBeliefs()->GetBeliefsState()["WithinRange"];
+	const bool bTargetSpotted = EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"];\
 
-	return !bTargetSpotted || bWithinRange;
+	return bTargetSpotted || DistanceToLastKnownPosition <= 25.0f;
 }
 
 void UAdvanceAction::ApplyEffects(UWorldState& WorldState)
 {
 	Super::ApplyEffects(WorldState);
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter()); 
-	EnemyAgent->GetBeliefs()->GetBeliefsState()["WithinRange"] = true; 
+	EnemyAgent->GetBeliefs()->GetBeliefsStateVectors()["LastKnownTargetPosition"] = FVector::ZeroVector;
 }

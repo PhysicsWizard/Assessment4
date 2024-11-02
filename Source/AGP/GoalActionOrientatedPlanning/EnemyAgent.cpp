@@ -64,6 +64,7 @@ void UEnemyAgent::BeginPlay()
 	Goals.Add(NewObject<UStayAliveGoal>(this)); 
 	AvailableAction.Empty();
 	AvailableAction.Add(NewObject<UChargeAttackAction>(this));
+	AvailableAction.Add(NewObject<UAttackAction>(this));
 	AvailableAction.Add(NewObject<UAdvanceAction>(this));
 	AvailableAction.Add(NewObject<UPatrolAction>(this));
 	AvailableAction.Add(NewObject<UHealAction>(this));

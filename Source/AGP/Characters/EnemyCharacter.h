@@ -153,6 +153,7 @@ public:
 	void TickEngage();
 	void TickEngageStationary();
 	void TickAdanceToTarget();
+	void TickGoToLocation( FVector& location);
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	APlayerCharacter* GetSensedCharacter();
