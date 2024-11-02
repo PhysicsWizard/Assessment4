@@ -21,8 +21,9 @@ UHealAction::UHealAction()
 
 bool UHealAction::IsActionPossible(const UWorldState& WorldState, const UBeliefs& Beliefs)
 {
-	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(&Beliefs);
-	const bool bInDangerOfDeath = EnemyBeliefs->bInDangerOfDeath();
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
+	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
+	const bool bInDangerOfDeath = EnemyBeliefs->GetBeliefsState()["InDangerOfDeath"];
 	const bool bNotHealing = !EnemyBeliefs->GetBeliefsState()["IsHealing"];
 	const bool bSafeDistanceToHeal = !EnemyBeliefs->bIsClose();
 	const bool bEnemyNotVisible = EnemyBeliefs->GetTarget() == nullptr;

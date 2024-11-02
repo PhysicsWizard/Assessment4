@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "AGP/GoalActionOrientatedPlanning/AdvanceAction.h"
 
+#include "EnemyAgent.h"
 #include "EnemyAgentBeliefs.h"
 #include "AGP/Characters/EnemyCharacter.h"
 
@@ -12,7 +13,8 @@ UAdvanceAction::UAdvanceAction()
 
 bool UAdvanceAction::IsActionPossible(const UWorldState& WorldState, const UBeliefs& Beliefs)
 {
-	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(&Beliefs);
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
+	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
 	//check if a target is directly spotted
 	const bool bTargetSpotted = EnemyBeliefs->GetBeliefsState()["TargetSpotted"];
 	const bool bHasTargetPosition = EnemyBeliefs->GetBeliefsStateVectors()["TargetPosition"] != FVector::ZeroVector;

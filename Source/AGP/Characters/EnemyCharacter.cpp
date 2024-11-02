@@ -38,10 +38,6 @@ void AEnemyCharacter::BeginPlay()
 	{
 		PawnSensingComponent->OnSeePawn.AddDynamic(this, &AEnemyCharacter::OnSensedPawn);
 	}
-	
-	EnemyAgentComponent = FindComponentByClass<UEnemyAgent>();
-	EnemyAgentComponent->SetTheOwner(this);
-	
 }
 
 void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

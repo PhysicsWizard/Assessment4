@@ -16,7 +16,8 @@ URetreatAction::URetreatAction()
 
 bool URetreatAction::IsActionPossible(const UWorldState& WorldState, const UBeliefs& Beliefs)
 {
-	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(&Beliefs);
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
+	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
 	const bool bAlmostAtHalfHealth = EnemyBeliefs->bWithinHealthRangeTolerance(0.61f);
 	const bool bEnemyTooClose = EnemyBeliefs->bIsClose();
 	const bool bEnemyVisible = EnemyBeliefs->GetTarget() !=nullptr;

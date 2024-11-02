@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "AGP/GoalActionOrientatedPlanning/StayAliveGoal.h"
 
+#include "EnemyAgent.h"
 #include "EnemyAgentBeliefs.h"
 
 
@@ -13,12 +14,14 @@ UStayAliveGoal::UStayAliveGoal()
 
 bool UStayAliveGoal::IsGoalAchieved(const UWorldState& WorldState, const UBeliefs& Beliefs) const
 {
-	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(&Beliefs);
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
+	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
 	return EnemyBeliefs->GetBeliefsState()["InDangerOfDeath"] == false;
 }
 
 bool UStayAliveGoal::IsGoalRelevant(const UWorldState& WorldState, UBeliefs& Beliefs) const
 {
-	UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(&Beliefs);
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
+	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
 	return EnemyBeliefs->GetBeliefsState()["InDangerOfDeath"] == true;
 }

@@ -7,6 +7,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "HealthComponent.h"
 #include "PlayerCharacterHUD.h"
+#include "AGP/EnemySpawner.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Sets default values

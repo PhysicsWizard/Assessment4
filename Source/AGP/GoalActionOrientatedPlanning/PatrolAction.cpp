@@ -13,7 +13,8 @@ UPatrolAction::UPatrolAction()
 
 bool UPatrolAction::IsActionPossible(const UWorldState& WorldState, const UBeliefs& Beliefs)
 {
-	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(&Beliefs);
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
+	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
 	const bool bNoTargetSpotted = EnemyBeliefs->GetBeliefsState()["TargetSpotted"];
 	const bool bNotInDangerOfDeath = !EnemyBeliefs->GetBeliefsState()["InDangerOfDeath"];
 	return bNoTargetSpotted && bNotInDangerOfDeath;

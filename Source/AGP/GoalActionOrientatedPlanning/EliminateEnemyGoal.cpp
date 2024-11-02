@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "AGP/GoalActionOrientatedPlanning/EliminateEnemyGoal.h"
 
+#include "EnemyAgent.h"
 #include "EnemyAgentBeliefs.h"
 
 
@@ -18,7 +19,8 @@ bool UEliminateEnemyGoal::IsGoalAchieved(const UWorldState& WorldState, const UB
 
 bool UEliminateEnemyGoal::IsGoalRelevant(const UWorldState& WorldState, UBeliefs& Beliefs) const
 {
-    const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(&Beliefs);
+    UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
+    const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
     const bool bNotAttackingTarget = !EnemyBeliefs->GetBeliefsState()["AttackingTarget"];
     const bool bNotInDangerOfDeath = EnemyBeliefs->GetBeliefsState()["InDangerOfDeath"];
     const bool bPlayerOneAlive = !WorldState.GetWorldState()["Player_One_Dead"];

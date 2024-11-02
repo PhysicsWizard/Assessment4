@@ -57,9 +57,26 @@ void UEnemyAgent::BeginPlay()
 	*/
 	Beliefs = NewObject<UEnemyAgentBeliefs>(this);
 	WorldState = UWorldState::GetInstance();
+	if(!EnemyCharacterComponent)
+	{
+		EnemyCharacterComponent = Cast<AEnemyCharacter>(GetOwner());
+		if(EnemyCharacterComponent)
+		{
+			EnemyCharacterComponent = Cast<AEnemyCharacter>(GetOuter());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No enemy character component found")); 
+		}
+	}
+
 	if(EnemyCharacterComponent)
 	{
 		HealthComponent = EnemyCharacterComponent->GiveHealthComponent();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No health component found")); 
 	}
 }
 
@@ -96,22 +113,24 @@ void UEnemyAgent::ManageHealthBeliefs()
 
 void UEnemyAgent::ManageSensedCharacters()
 {
-	const AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(GetOuter()->GetOuter());
-	if(const ACharacter* Character = EnemyCharacterComponent->GetSensedCharacter())
+	if(EnemyCharacterComponent)
 	{
-		if(FVector::Dist(EnemyCharacter->GetActorLocation(), Character->GetActorLocation()) > 300.0f)
+		if(const ACharacter* Character = EnemyCharacterComponent->GetSensedCharacter())
 		{
+			if(FVector::Dist(EnemyCharacterComponent->GetActorLocation(), Character->GetActorLocation()) > 300.0f)
+			{
+				GetBeliefs()->GetBeliefsState()["WithinRange"] = false;
+			}
 			GetBeliefs()->GetBeliefsState()["WithinRange"] = false;
+			GetBeliefs()->GetBeliefsState()["TargetSpotted"] = true;
+			GetBeliefs()->GetBeliefsStateVectors()["TargetPosition"] = Character->GetActorLocation();
+			GetBeliefs()->GetBeliefsStateVectors()["LastKnownTargetPosition"] = Character->GetActorLocation();
 		}
-		GetBeliefs()->GetBeliefsState()["WithinRange"] = false;
-		GetBeliefs()->GetBeliefsState()["TargetSpotted"] = true;
-		GetBeliefs()->GetBeliefsStateVectors()["TargetPosition"] = Character->GetActorLocation();
-		GetBeliefs()->GetBeliefsStateVectors()["LastKnownTargetPosition"] = Character->GetActorLocation();
-	}
-	else
-	{
-		GetBeliefs()->GetBeliefsState()["TargetSpotted"] = false;
-		GetBeliefs()->GetBeliefsStateVectors()["TargetPosition"] = FVector::ZeroVector;
+		else
+		{
+			GetBeliefs()->GetBeliefsState()["TargetSpotted"] = false;
+			GetBeliefs()->GetBeliefsStateVectors()["TargetPosition"] = FVector::ZeroVector;
+		}
 	}
 }
 
