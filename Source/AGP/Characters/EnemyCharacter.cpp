@@ -4,6 +4,7 @@
 #include "EngineUtils.h"
 #include "HealthComponent.h"
 #include "PlayerCharacter.h"
+#include "AGP/EnemySpawner.h"
 #include "AGP/GoalActionOrientatedPlanning/EnemyAgent.h"
 #include "AGP/Pathfinding/PathfindingSubsystem.h"
 #include "Net/UnrealNetwork.h"
@@ -177,6 +178,8 @@ void AEnemyCharacter::UpdateSight()
 		if (!PawnSensingComponent->HasLineOfSightTo(SensedCharacter))
 		{
 			SensedCharacter = nullptr;
+			UE_LOG(LogTemp, Log, TEXT("Sensed"));
+			EnemySpawner->IncreasePlayerDetected();
 		}
 	}
 }
