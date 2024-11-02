@@ -16,11 +16,22 @@
 
 
 void UEnemyAgent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
+{ 
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	ManageHealthBeliefs();
 	ManageSensedCharacters();
 	GetBeliefs()->UpdateBeliefs();
+	
+	// Print checks
+	if (CurrentGoal)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Current Goal: %s"), *CurrentGoal->GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Current Goal is null"));
+	}
+	UE_LOG(LogTemp, Warning, TEXT("CurrentPlan length: %d"), CurrentPlan.Num());
 }
 
 void UEnemyAgent::PerformAction()
@@ -35,20 +46,24 @@ bool UEnemyAgent::PlanActions()
 
 UEnemyAgent::UEnemyAgent()
 {
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 void UEnemyAgent::BeginPlay()
 {
 	Super::BeginPlay();
+	UE_LOG(LogTemp, Warning, TEXT("BeginPlay in UEnemyAgent called"));
 	Goals.Empty();
 	Goals.Add(NewObject<UEliminateEnemyGoal>(this));
 	Goals.Add(NewObject<UStayAliveGoal>(this));
+	UE_LOG(LogTemp, Warning, TEXT("Goals count: %d"), Goals.Num()); 
 	AvailableAction.Empty();
 	AvailableAction.Add(NewObject<UPatrolAction>(this));
 	AvailableAction.Add(NewObject<UHealAction>(this));
 	AvailableAction.Add(NewObject<UAttackAction>(this));
 	AvailableAction.Add(NewObject<UChargeAttackAction>(this));
 	AvailableAction.Add(NewObject<URetreatAction>(this));
+	UE_LOG(LogTemp, Warning, TEXT("AvailableAction count: %d"), AvailableAction.Num()); 
 	/*
 	 * Possible do these three not sure yet
 	 *AvailableAction.Add(NewObject<UFlankAction>(this));
@@ -66,17 +81,26 @@ void UEnemyAgent::BeginPlay()
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("No enemy character component found")); 
+			UE_LOG(LogTemp, Warning, TEXT("No enemy character component found!!!")); 
 		}
 	}
 
 	if(EnemyCharacterComponent)
 	{
 		HealthComponent = EnemyCharacterComponent->GiveHealthComponent();
+		if(!HealthComponent)
+		{
+			HealthComponent = EnemyCharacterComponent->FindComponentByClass<UHealthComponent>();
+		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("No health component found")); 
+		UE_LOG(LogTemp, Warning, TEXT("No health component found!!!")); 
+	}
+
+	if (!IsActive())
+	{
+		SetActive(true);
 	}
 }
 
@@ -104,10 +128,12 @@ void UEnemyAgent::ManageHealthBeliefs()
 		TPair<FString, FVector> TargetMemory(TEXT("LastKnownTargetPosition"), EnemyCharacterComponent->GetSensedCharacter()->GetActorLocation());
 		GetBeliefs()->UpdateBeliefsStateVectors(TargetMemory);
 		GetBeliefs()->GetBeliefsState()["WithinRange"] = true;
+		PlanActions();
 	}
 	else
 	{
 		GetBeliefs()->GetBeliefsState()["WithinRange"] = false;
+		PlanActions();
 	}
 }
 
