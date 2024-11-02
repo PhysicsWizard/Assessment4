@@ -56,11 +56,6 @@ void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	DOREPLIFETIME(AEnemyCharacter, Stats);
 }
 
-UHealthComponent* AEnemyCharacter::GiveHealthComponent()
-{
-	return HealthComponent;
-}
-
 APlayerCharacter* AEnemyCharacter::GetSensedCharacter()
 {
 	return SensedCharacter;

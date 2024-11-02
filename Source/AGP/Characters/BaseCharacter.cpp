@@ -145,3 +145,8 @@ int ABaseCharacter::GetEnemiesKilledInLastMinute() const
 	return EnemiesKilledInLastMinute;
 }
 
+UHealthComponent* ABaseCharacter::GiveHealthComponent()
+{
+	return HealthComponent;
+}
+
