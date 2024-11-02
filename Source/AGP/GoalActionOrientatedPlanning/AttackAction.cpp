@@ -13,10 +13,9 @@ UAttackAction::UAttackAction()
 
 bool UAttackAction::IsActionPossible(const UWorldState& WorldState, const UBeliefs& Beliefs)
 {
-	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
-	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
-	const bool bTargetSpotted = EnemyBeliefs->GetBeliefsState()["TargetSpotted"];
-	const bool bWithinFiringRange = EnemyBeliefs->GetBeliefsState()["WithinRange"];
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter()); 
+	const bool bTargetSpotted = EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"];
+	const bool bWithinFiringRange = EnemyAgent->GetBeliefs()->GetBeliefsState()["WithinRange"];
 	//const bool bAttackingTarget = EnemyBeliefs->GetBeliefsState()["AttackingTarget"];
 
 	UE_LOG(LogTemp, Log, TEXT("AttackAction - TargetSpotted?: %s, WithinFiringRange?: %s"),
@@ -36,17 +35,16 @@ void UAttackAction::PerformAction()
 
 bool UAttackAction::IsActionComplete() const
 {
-	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
-	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
-	const bool bNoTarget = !EnemyBeliefs->GetBeliefsState()["TargetSpotted"];
-	const bool bOutOfRange = !EnemyBeliefs->GetBeliefsState()["WithinRange"];
-	const bool bInDangerOfDeath = EnemyBeliefs->GetBeliefsState()["InDangerOfDeath"];
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter()); 
+	const bool bNoTarget = !EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"];
+	const bool bOutOfRange = !EnemyAgent->GetBeliefs()->GetBeliefsState()["WithinRange"];
+	const bool bInDangerOfDeath = EnemyAgent->GetBeliefs()->GetBeliefsState()["InDangerOfDeath"];
 	const bool bCantEngage = bNoTarget && bOutOfRange;
 	 
 	if (bCantEngage || bInDangerOfDeath)
 	{
 		// Reset AttackingTarget to false
-		EnemyBeliefs->GetBeliefsState()["AttackingTarget"] = false;
+		EnemyAgent->GetBeliefs()->GetBeliefsState()["AttackingTarget"] = false;
 		return true;
 	}
 	return false;
@@ -55,7 +53,6 @@ bool UAttackAction::IsActionComplete() const
 void UAttackAction::ApplyEffects(UWorldState& WorldState)
 {
 	Super::ApplyEffects(WorldState);
-	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
-	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
-	EnemyBeliefs->GetBeliefsState()["AttackingTarget"] = true;
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter()); 
+	EnemyAgent->GetBeliefs()->GetBeliefsState()["AttackingTarget"] = true;
 }

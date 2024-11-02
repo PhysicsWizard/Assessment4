@@ -14,10 +14,9 @@ UPatrolAction::UPatrolAction()
 bool UPatrolAction::IsActionPossible(const UWorldState& WorldState, const UBeliefs& Beliefs)
 {
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
-	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
 
-	const bool bNoTargetSpotted = !EnemyBeliefs->GetBeliefsState()["TargetSpotted"];
-	const bool bNotInDangerOfDeath = !EnemyBeliefs->GetBeliefsState()["InDangerOfDeath"];
+	bool bNoTargetSpotted = !EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"];
+	bool bNotInDangerOfDeath = !EnemyAgent->GetBeliefs()->GetBeliefsState()["InDangerOfDeath"];
 
 	UE_LOG(LogTemp, Log, TEXT("PatrolAction - bNoTargetSpotted: %s, bNotInDangerOfDeath: %s"),
 		bNoTargetSpotted ? TEXT("true") : TEXT("false"),
@@ -34,11 +33,19 @@ void UPatrolAction::PerformAction()
 
 bool UPatrolAction::IsActionComplete() const
 {
+	/*
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
 	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
 	const bool bTargetSpotted = EnemyBeliefs->GetBeliefsState()["TargetSpotted"];
 	const bool bInDangerOfDeath = EnemyBeliefs->GetBeliefsState()["InDangerOfDeath"];
 	return bTargetSpotted && bInDangerOfDeath;
+	*/
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
+	if(EnemyAgent->GetEnemyCharacterComponent()->GetSensedCharacter())
+	{
+		return true;
+	}
+	return false;
 }
 
 void UPatrolAction::ApplyEffects(UWorldState& WorldState)

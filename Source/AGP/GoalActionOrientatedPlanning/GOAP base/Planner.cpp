@@ -11,33 +11,42 @@
 
 TArray<UAction*> UPlanner::CreatePlan(UAgent* Agent, UGoal* Goal, UWorldState& WorldState,  UBeliefs& Beliefs)
 {
-	TArray<UAction*> AvailableActions = Agent -> GetAvailableAction();
-	
-	//UE_LOG(LogTemp, Warning, TEXT("Available Action Count: %d"), AvailableActions.Num());
+	TArray<UAction*> AvailableActions = Agent->GetAvailableAction();
 	TArray<UAction*> ThePlan;
-	 UWorldState* CurrentState = WorldState.Clone();
+	UWorldState* CurrentState = WorldState.Clone();
 	UBeliefs* CurrentBeliefs = Beliefs.Clone();
 
-	for(UAction* Action: AvailableActions)
+
+	int32 Index = 0;
+	while (Index < AvailableActions.Num())
 	{
+		UAction* Action = AvailableActions[Index];
 		bool bActionPossible = Action->IsActionPossible(*CurrentState, *CurrentBeliefs);
 		UE_LOG(LogTemp, Warning, TEXT("Action %s possible: %s"), *Action->GetName(), bActionPossible ? TEXT("true") : TEXT("false"));
-		if(Action->IsActionPossible(*CurrentState, *CurrentBeliefs))
+        
+		if (bActionPossible)
 		{
-			ThePlan.Add(Action); 
-			Action->ApplyEffects( *CurrentState);
+			ThePlan.Add(Action);
+			AvailableActions.RemoveAt(Index);
+			Action->ApplyEffects(*CurrentState);
+			if (Goal->IsGoalAchieved(*CurrentState, *CurrentBeliefs))
+			{
+				return ThePlan;
+			}
 		}
-
-		if(Goal->IsGoalAchieved(*CurrentState, *CurrentBeliefs))
-			return ThePlan;
-		
+		else
+		{
+			++Index; // Move to the next action if this action isn't possible
+		}
 	}
-	
-	if(ThePlan.Num() > 0)
+
+	if (ThePlan.Num() > 0)
 	{
 		return ThePlan;
 	}
-	
+
+	// Return an empty plan if no solution is found
+	UE_LOG(LogTemp, Warning, TEXT("No valid plan could be created to achieve the goal."));
 	return TArray<UAction*>();
 }
 

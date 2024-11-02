@@ -21,10 +21,12 @@ protected:
 	TMap<FString, FVector> BeliefsStateVectors;
 
 public:
-	TMap<FString, bool> GetBeliefsState();
-	TMap<FString, bool> GetBeliefsState() const;
-	TMap<FString, FVector> GetBeliefsStateVectors();
-	TMap<FString, FVector> GetBeliefsStateVectors() const;
+	// Non-const versions return a reference
+	TMap<FString, bool>& GetBeliefsState();
+	TMap<FString, FVector>& GetBeliefsStateVectors();
+	// Const versions return a const reference
+	const TMap<FString, bool>& GetBeliefsStateConst() const;
+	const TMap<FString, FVector>& GetBeliefsStateVectorsConst() const;
 	void UpdateBeliefsState(TMap<FString, bool> NewBeliefs);
 	void UpdateBeliefsStateVectors(TMap<FString, FVector> NewBeliefs);
 	void UpdateBeliefsState(const TPair<FString, bool>& NewBeliefs);

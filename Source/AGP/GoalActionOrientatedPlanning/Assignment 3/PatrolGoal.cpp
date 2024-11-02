@@ -14,13 +14,16 @@ UPatrolGoal::UPatrolGoal()
 
 bool UPatrolGoal::IsGoalAchieved(const UWorldState& WorldState, const UBeliefs& Beliefs) const
 {
+	/*
 	if (Beliefs.GetBeliefsState().Contains("AtWaypoint") && Beliefs.GetBeliefsState()["AtWaypoint"])
 	{
 		// Optionally, check if agent has patrolled through all waypoints
 		return true;  // Patrol goal is considered achieved when waypoints have been patrolled
 	}
 
-	return false; 
+	return false;
+	*/
+	return false;
 }
 
 bool UPatrolGoal::IsGoalRelevant(const UWorldState& WorldState, UBeliefs& Beliefs) const

@@ -11,15 +11,15 @@ class AEnemyCharacter;
 
 UEnemyAgentBeliefs::UEnemyAgentBeliefs()
 {
-	BeliefsState.Add("TargetSpotted", false);
-	BeliefsState.Add("AttackingTarget", false);
-	BeliefsState.Add("InDangerOfDeath", false);
-	BeliefsState.Add("IsHealing", false);
-	BeliefsState.Add("HasFullHealth", true);
-	BeliefsState.Add("WithinRange", false);
-	BeliefsState.Add("SafeDistanceToHeal", false);
-	BeliefsStateVectors.Add("TargetPosition", FVector::ZeroVector);
-	BeliefsStateVectors.Add("LastKnownTargetPosition", FVector::ZeroVector);
+	BeliefsState.Emplace("TargetSpotted", false);
+	BeliefsState.Emplace("AttackingTarget", false);
+	BeliefsState.Emplace("InDangerOfDeath", false);
+	BeliefsState.Emplace("IsHealing", false);
+	BeliefsState.Emplace("HasFullHealth", true);
+	BeliefsState.Emplace("WithinRange", false);
+	BeliefsState.Emplace("SafeDistanceToHeal", false);
+	BeliefsStateVectors.Emplace("TargetPosition", FVector::ZeroVector);
+	BeliefsStateVectors.Emplace("LastKnownTargetPosition", FVector::ZeroVector);
 }
 
 void UEnemyAgentBeliefs::SetCurrentHealthPercentage(const float percentage)
@@ -34,10 +34,11 @@ float UEnemyAgentBeliefs::GetCurrentHealthPercentage() const
 
 bool UEnemyAgentBeliefs::bIsClose() const
 {
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(GetOuter()->GetOuter());
-	float Distance = FVector::Dist(EnemyCharacter->GetActorLocation(), GetBeliefsStateVectors()["LastKnownTargetPosition"]);
+	float Distance = FVector::Dist(EnemyCharacter->GetActorLocation(), EnemyAgent->GetBeliefs()->GetBeliefsStateVectors()["LastKnownTargetPosition"]);
 	bool bSafeDistance = Distance <= EnemyCharacter->GetNoiseSenitivity();
-	GetBeliefsState()["SafeDistanceToHeal"] = bSafeDistance;
+	EnemyAgent->GetBeliefs()->GetBeliefsState()["SafeDistanceToHeal"] = bSafeDistance;
 	return bSafeDistance;
 }
 
@@ -47,16 +48,16 @@ bool UEnemyAgentBeliefs::bInDangerOfDeath() const
 	const float HealthPercentage = EnemyAgent->GetHealthComponent()->GetCurrentHealthPercentage();
 	const bool bInDangerOfDeath = HealthPercentage <= Cast<AEnemyCharacter>(EnemyAgent->GetOuter())->GetAggressionClamped();
 	UE_LOG(LogTemp, Log, TEXT("Enemy Aggression Clamped: %f"),Cast<AEnemyCharacter>(GetOuter()->GetOuter())->GetAggressionClamped() );
-	GetBeliefsState()["InDangerOfDeath"] = bInDangerOfDeath;
+	EnemyAgent->GetBeliefs()->GetBeliefsState()["InDangerOfDeath"] = bInDangerOfDeath;
 	return bInDangerOfDeath;
 }
 
 bool UEnemyAgentBeliefs::bHasFullHealth() const
 {
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
-	const float HealthPercentage = EnemyAgent->GetHealthComponent()->GetCurrentHealthPercentage();
+	float HealthPercentage = EnemyAgent->GetHealthComponent()->GetCurrentHealthPercentage();
 	bool bHasFullHealth = HealthPercentage >=1.0f;
-	GetBeliefsState()["HasFullHealth"] = bHasFullHealth;
+	EnemyAgent->GetBeliefs()->GetBeliefsState()["HasFullHealth"] = bHasFullHealth;
 	return bHasFullHealth;
 }
 

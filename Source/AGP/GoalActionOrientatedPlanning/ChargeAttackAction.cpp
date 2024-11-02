@@ -43,11 +43,14 @@ bool UChargeAttackAction::IsActionPossible(const UWorldState& WorldState, const 
 void UChargeAttackAction::PerformAction()
 {
 	if(AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(GetOuter()->GetOuter()))
-		EnemyCharacter->TickEngage();
+	{ 
+		EnemyCharacter->TickEngageStationary();
+	}
 }
 
 bool UChargeAttackAction::IsActionComplete() const
 {
+	/*
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
 	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
 	const bool bNoTarget = !EnemyBeliefs->GetBeliefsState()["TargetSpotted"];
@@ -62,12 +65,19 @@ bool UChargeAttackAction::IsActionComplete() const
 		return true;
 	}
 	return false;
+	*/
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
+	if(!EnemyAgent->GetEnemyCharacterComponent()->GetSensedCharacter())
+	{
+		return true;
+	}
+	return false;
 }
 
 void UChargeAttackAction::ApplyEffects(UWorldState& WorldState)
 {
 	Super::ApplyEffects(WorldState);
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
-	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
+	UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
 	EnemyBeliefs->GetBeliefsState()["AttackingTarget"] = true;
 }

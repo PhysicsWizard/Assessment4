@@ -22,11 +22,10 @@ UHealAction::UHealAction()
 bool UHealAction::IsActionPossible(const UWorldState& WorldState, const UBeliefs& Beliefs)
 {
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
-	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
-	const bool bInDangerOfDeath = EnemyBeliefs->GetBeliefsState()["InDangerOfDeath"];
-	const bool bNotHealing = !EnemyBeliefs->GetBeliefsState()["IsHealing"];
-	const bool bSafeDistanceToHeal = !EnemyBeliefs->bIsClose();
-	const bool bEnemyNotVisible = EnemyBeliefs->GetTarget() == nullptr;
+	const bool bInDangerOfDeath = EnemyAgent->GetBeliefs()->GetBeliefsState()["InDangerOfDeath"];
+	const bool bNotHealing = !EnemyAgent->GetBeliefs()->GetBeliefsState()["IsHealing"];
+	const bool bSafeDistanceToHeal = !EnemyAgent->GetBeliefs()->bIsClose();
+	const bool bEnemyNotVisible = EnemyAgent->GetBeliefs()->GetTarget() == nullptr;
 
 	return bInDangerOfDeath && bNotHealing && bSafeDistanceToHeal && bEnemyNotVisible;
 }
@@ -50,8 +49,8 @@ void UHealAction::ApplyEffects(UWorldState& WorldState)
 {
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
 	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
-	EnemyBeliefs->GetBeliefsState()["InDangerOfDeath"] = false;
-	EnemyBeliefs->GetBeliefsState()["HasFullHealth"] = true;
+	EnemyAgent->GetBeliefs()->GetBeliefsState()["InDangerOfDeath"] = false;
+	EnemyAgent->GetBeliefs()->GetBeliefsState()["HasFullHealth"] = true;
 	Super::ApplyEffects(WorldState);
 }
 

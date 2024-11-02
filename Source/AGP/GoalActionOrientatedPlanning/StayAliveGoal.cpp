@@ -15,14 +15,12 @@ UStayAliveGoal::UStayAliveGoal()
 
 bool UStayAliveGoal::IsGoalAchieved(const UWorldState& WorldState, const UBeliefs& Beliefs) const
 {
-	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
-	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
-	return EnemyBeliefs->GetBeliefsState()["InDangerOfDeath"] == false;
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter()); 
+	return EnemyAgent->GetBeliefs()->GetBeliefsState()["InDangerOfDeath"] == false;
 }
 
 bool UStayAliveGoal::IsGoalRelevant(const UWorldState& WorldState, UBeliefs& Beliefs) const
 {
-	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
-	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
-	return EnemyBeliefs->GetBeliefsState()["InDangerOfDeath"] == true;
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter()); 
+	return EnemyAgent->GetBeliefs()->GetBeliefsState()["InDangerOfDeath"] == true;
 }

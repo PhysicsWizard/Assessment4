@@ -21,6 +21,11 @@ void UEnemyAgent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	ManageSensedCharacters();
 	GetBeliefs()->UpdateBeliefs();
 
+	UE_LOG(LogTemp, Warning, TEXT("Beliefs - TargetSpotted: %s, WithinRange: %s"),
+	   GetBeliefs()->GetBeliefsState()["TargetSpotted"] ? TEXT("true") : TEXT("false"),
+	   GetBeliefs()->GetBeliefsState()["WithinRange"] ? TEXT("true") : TEXT("false"));
+
+	/*
 	if (CurrentGoal)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Current Goal: %s"), *CurrentGoal->GetName());
@@ -29,6 +34,7 @@ void UEnemyAgent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Current Action: %s"), *CurrentPlan[0]->GetName());
 	}
+	*/
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
@@ -50,24 +56,14 @@ UEnemyAgent::UEnemyAgent()
 void UEnemyAgent::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogTemp, Warning, TEXT("BeginPlay in UEnemyAgent called"));
 	Goals.Empty();
 	Goals.Add(NewObject<UEliminateEnemyGoal>(this));
-	Goals.Add(NewObject<UStayAliveGoal>(this));
-	UE_LOG(LogTemp, Warning, TEXT("Goals count: %d"), Goals.Num()); 
+	Goals.Add(NewObject<UStayAliveGoal>(this)); 
 	AvailableAction.Empty();
+	AvailableAction.Add(NewObject<UChargeAttackAction>(this));
 	AvailableAction.Add(NewObject<UPatrolAction>(this));
 	AvailableAction.Add(NewObject<UHealAction>(this));
-	AvailableAction.Add(NewObject<UAttackAction>(this));
-	AvailableAction.Add(NewObject<UChargeAttackAction>(this));
-	AvailableAction.Add(NewObject<URetreatAction>(this));
-	UE_LOG(LogTemp, Warning, TEXT("AvailableAction count: %d"), AvailableAction.Num()); 
-	/*
-	 * Possible do these three not sure yet
-	 *AvailableAction.Add(NewObject<UFlankAction>(this));
-	AvailableAction.Add(NewObject<USuppressPlayerAction>(this));
-	AvailableAction.Add(NewObject<UTakeCoverAction>(this));
-	*/
+	AvailableAction.Add(NewObject<URetreatAction>(this));  
 	Beliefs = NewObject<UEnemyAgentBeliefs>(this);
 	WorldState = UWorldState::GetInstance();
 	EnemyCharacterComponent = Cast<AEnemyCharacter>(GetOuter());
@@ -111,36 +107,28 @@ void UEnemyAgent::ManageHealthBeliefs()
 
 void UEnemyAgent::ManageSensedCharacters()
 {
-	if(EnemyCharacterComponent)
+	if (EnemyCharacterComponent)
 	{ 
-		if(const APlayerCharacter* Character = EnemyCharacterComponent->GetSensedCharacter())
+		if (const APlayerCharacter* Character = EnemyCharacterComponent->GetSensedCharacter())
 		{
-			if(FVector::Dist(EnemyCharacterComponent->GetActorLocation(), Character->GetActorLocation()) > 400.0f)
-			{
-				GetBeliefs()->GetBeliefsState()["WithinRange"] = false;
-			}
-			else
-			{
-				GetBeliefs()->GetBeliefsState()["WithinRange"] = true;
-			}
-			GetBeliefs()->GetBeliefsState()["TargetSpotted"] = true;
-			GetBeliefs()->GetBeliefsStateVectors()["TargetPosition"] = Character->GetActorLocation();
-			GetBeliefs()->GetBeliefsStateVectors()["LastKnownTargetPosition"] = Character->GetActorLocation();
-			UE_LOG(LogTemp, Log, TEXT("TargetPosition: %s"), *Character->GetActorLocation().ToString());
-			UE_LOG(LogTemp, Log, TEXT("LastKnownTargetPosition: %s"), *Character->GetActorLocation().ToString());
+			const float Distance = FVector::Dist(EnemyCharacterComponent->GetActorLocation(), Character->GetActorLocation());
+			const bool bWithinRange = Distance <= 500.0f;
+
+			// Now we're modifying the actual belief map
+			Beliefs->GetBeliefsState()["WithinRange"] = bWithinRange;
+			Beliefs->GetBeliefsState()["TargetSpotted"] = true;
+			Beliefs->GetBeliefsStateVectors()["TargetPosition"] = Character->GetActorLocation();
+			Beliefs->GetBeliefsStateVectors()["LastKnownTargetPosition"] = Character->GetActorLocation();
 		}
 		else
 		{
-			GetBeliefs()->GetBeliefsState()["TargetSpotted"] = false;
-			GetBeliefs()->GetBeliefsStateVectors()["TargetPosition"] = FVector::ZeroVector;
+			Beliefs->GetBeliefsState()["TargetSpotted"] = false;
+			Beliefs->GetBeliefsState()["WithinRange"] = false;
+			Beliefs->GetBeliefsStateVectors()["TargetPosition"] = FVector::ZeroVector;
 		}
-		PlanActions();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Enemy Character Component Invalid is null"));
 	}
 }
+
 
 void UEnemyAgent::SetTheOwner(AEnemyCharacter* EnemyCharacter)
 {

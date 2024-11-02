@@ -3,22 +3,22 @@
 
 #include "Beliefs.h"
 
-TMap<FString, bool> UBeliefs::GetBeliefsState()
+TMap<FString, bool>& UBeliefs::GetBeliefsState()
 {
 	return BeliefsState;
 }
 
-TMap<FString, bool> UBeliefs::GetBeliefsState() const
+const TMap<FString, bool>& UBeliefs::GetBeliefsStateConst() const
 {
 	return BeliefsState;
 }
 
-TMap<FString, FVector>  UBeliefs::GetBeliefsStateVectors() 
+TMap<FString, FVector>& UBeliefs::GetBeliefsStateVectors()
 {
 	return BeliefsStateVectors;
 }
 
-TMap<FString, FVector> UBeliefs::GetBeliefsStateVectors() const
+const TMap<FString, FVector>& UBeliefs::GetBeliefsStateVectorsConst() const
 {
 	return BeliefsStateVectors;
 }

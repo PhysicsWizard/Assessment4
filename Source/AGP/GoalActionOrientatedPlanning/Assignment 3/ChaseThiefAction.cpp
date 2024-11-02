@@ -22,7 +22,7 @@ UChaseThiefAction::UChaseThiefAction()
 
 bool UChaseThiefAction::IsActionPossible(const UWorldState& WorldState, const UBeliefs& Beliefs)
 { 
-	return Beliefs.GetBeliefsState()["ThiefVisible"];
+	return false;
 }
 
 void UChaseThiefAction::PerformAction()

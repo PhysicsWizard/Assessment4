@@ -47,9 +47,8 @@ bool URetreatAction::IsActionComplete() const
 void URetreatAction::ApplyEffects(UWorldState& WorldState)
 {
 	Super::ApplyEffects(WorldState);
-	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
-	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
-	EnemyBeliefs->GetBeliefsState()["InDangerOfDeath"] = false;
-	EnemyBeliefs->GetBeliefsState()["TargetSpotted"] = false;
-	EnemyBeliefs->GetBeliefsState()["SafeDistanceToHeal"] = true;
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter()); 
+	EnemyAgent->GetBeliefs()->GetBeliefsState()["InDangerOfDeath"] = false;
+	EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"] = false;
+	EnemyAgent->GetBeliefs()->GetBeliefsState()["SafeDistanceToHeal"] = true;
 }
