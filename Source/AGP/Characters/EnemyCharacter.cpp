@@ -33,15 +33,8 @@ void AEnemyCharacter::BeginPlay()
 	} 
 	if (PawnSensingComponent)
 	{
-		PawnSensingComponent->SetComponentTickEnabled(true);
-		PawnSensingComponent->bOnlySensePlayers = true;  
-
-		// Configure sensing settings
-		PawnSensingComponent->OnSeePawn.AddDynamic(this, &AEnemyCharacter::OnSensedPawn);
-		PawnSensingComponent->SightRadius = 1500.0f;  
-		PawnSensingComponent->SetPeripheralVisionAngle(90.0f); 
-		PawnSensingComponent->HearingThreshold = 600.0f;  
-		PawnSensingComponent->LOSHearingThreshold = 1200.0f;
+		UE_LOG(LogTemp, Warning, TEXT("There is a pawn sensing component"))
+		PawnSensingComponent->OnSeePawn.AddDynamic(this, &AEnemyCharacter::OnSeePawnDetected);
 	}
 	else
 	{
@@ -150,6 +143,23 @@ void AEnemyCharacter::TickAdanceToTarget()
 	MoveAlongPath();
 }
 
+void AEnemyCharacter::OnSeePawnDetected(APawn* SeenPawn)
+{
+	if(SeenPawn)
+	{
+		SensedCharacter = Cast<APlayerCharacter>(SeenPawn);
+		if (SensedCharacter)
+		{
+			// Successfully cast to APlayerCharacter, proceed with any additional logic
+			UE_LOG(LogTemp, Log, TEXT("Player detected: %s"), *SensedCharacter->GetName());
+		}
+	}
+	else
+	{
+		SensedCharacter = nullptr;
+	}
+}
+
 void AEnemyCharacter::TickEvade()
 {
 	// Find the player and return if it can't find it.
@@ -207,7 +217,7 @@ void AEnemyCharacter::PerformRaycastDetection()
     	UE_LOG(LogTemp, Log, TEXT("Searching..."));
         FHitResult HitResult;
         FCollisionQueryParams CollisionParams;
-        CollisionParams.AddIgnoredActor(Owner);
+        CollisionParams.AddIgnoredActor(this);
 
         // Perform the line trace
     	FColor LineColor = FColor::Green;
@@ -232,12 +242,10 @@ void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime); 
 	// DO NOTHING UNLESS IT IS ON THE SERVER
-	//if (GetLocalRole() != ROLE_Authority) return;
-	
+	if (GetLocalRole() != ROLE_Authority) return;
 	UpdateSight();
 	//Highly inefficient i know but the sensing component isn't working so i am using this one from my previous assignment
-	PerformRaycastDetection(); // Fallback if sensing component fails
-	UE_LOG(LogTemp, Log, TEXT("Searching in Tick"));
+	//PerformRaycastDetection(); // Fallback if sensing component fails
 
 }
 

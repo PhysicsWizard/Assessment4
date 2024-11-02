@@ -121,7 +121,7 @@ protected:
 	 * A pointer to a PlayerCharacter that can be seen by this enemy character. If this is nullptr then the enemy cannot
 	 * see any PlayerCharacter.
 	 */
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Detection")
 	APlayerCharacter* SensedCharacter = nullptr;
 
 	/**
@@ -141,6 +141,9 @@ protected:
 	 */
 	UPROPERTY(Replicated, EditAnywhere)
 	FEnemyStats Stats;
+	
+	UFUNCTION()
+	void OnSeePawnDetected(APawn* SeenPawn);
 
 	
 public:

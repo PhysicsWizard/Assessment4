@@ -130,7 +130,7 @@ void UEnemyAgent::ManageSensedCharacters()
 	{
 		if(const APlayerCharacter* Character = EnemyCharacter->GetSensedCharacter())
 		{
-			if(FVector::Dist(EnemyCharacter->GetActorLocation(), Character->GetActorLocation()) > 300.0f)
+			if(FVector::Dist(EnemyCharacter->GetActorLocation(), Character->GetActorLocation()) > 400.0f)
 			{
 				GetBeliefs()->GetBeliefsState()["WithinRange"] = false;
 			}
@@ -138,7 +138,6 @@ void UEnemyAgent::ManageSensedCharacters()
 			{
 				GetBeliefs()->GetBeliefsState()["WithinRange"] = true;
 			}
-			GetBeliefs()->GetBeliefsState()["WithinRange"] = false;
 			GetBeliefs()->GetBeliefsState()["TargetSpotted"] = true;
 			GetBeliefs()->GetBeliefsStateVectors()["TargetPosition"] = Character->GetActorLocation();
 			GetBeliefs()->GetBeliefsStateVectors()["LastKnownTargetPosition"] = Character->GetActorLocation();
