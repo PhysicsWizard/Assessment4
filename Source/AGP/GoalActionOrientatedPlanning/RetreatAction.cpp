@@ -18,30 +18,26 @@ URetreatAction::URetreatAction()
 bool URetreatAction::IsActionPossible(const UWorldState& WorldState, const UBeliefs& Beliefs)
 {
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
-	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
-	const bool bAlmostAtHalfHealth = EnemyBeliefs->bWithinHealthRangeTolerance(0.61f);
-	const bool bEnemyTooClose = EnemyBeliefs->bIsClose();
-	const bool bEnemyVisible = EnemyBeliefs->GetTarget() !=nullptr;
+	const bool bAlmostAtHalfHealth = EnemyAgent->GetBeliefs()->bWithinHealthRangeTolerance(0.61f);
+	const bool bTargetSensed = EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"];
 
-	return bAlmostAtHalfHealth && bEnemyTooClose && bEnemyVisible;
+	return bAlmostAtHalfHealth && bTargetSensed;
 }
 
 void URetreatAction::PerformAction()
 {
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
-	if(AEnemyCharacter* EnemeyCharacterComponent = EnemyAgent->GetEnemyCharacterComponent())
+	if(AEnemyCharacter* EnemyCharacter = EnemyAgent->GetEnemyCharacterComponent())
 	{
-		EnemeyCharacterComponent->TickEvade();
+		EnemyAgent->GetBeliefs()->GetBeliefsState()["SafeDistanceToHeal"] = false;
+		EnemyCharacter->TickEvade();
 	}
 }
 
 bool URetreatAction::IsActionComplete() const
 {
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
-	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
-	const bool bIsEnemyFarEnough = !EnemyBeliefs->bIsClose();
-	const bool bNoEnemyVisible = EnemyBeliefs->GetTarget() == nullptr;
-	return bIsEnemyFarEnough && bNoEnemyVisible;
+	return EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"];
 }
 
 void URetreatAction::ApplyEffects(UWorldState& WorldState)

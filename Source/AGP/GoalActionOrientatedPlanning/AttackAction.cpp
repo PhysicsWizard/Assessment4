@@ -13,7 +13,7 @@ UAttackAction::UAttackAction()
 
 bool UAttackAction::IsActionPossible(const UWorldState& WorldState, const UBeliefs& Beliefs)
 {
-	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter()); 
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
 	const bool bTargetSpotted = EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"];
 	const bool bWithinFiringRange = EnemyAgent->GetBeliefs()->GetBeliefsState()["WithinRange"];
 	return bTargetSpotted && bWithinFiringRange;

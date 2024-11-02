@@ -22,12 +22,7 @@ UHealAction::UHealAction()
 bool UHealAction::IsActionPossible(const UWorldState& WorldState, const UBeliefs& Beliefs)
 {
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
-	const bool bInDangerOfDeath = EnemyAgent->GetBeliefs()->GetBeliefsState()["InDangerOfDeath"];
-	const bool bNotHealing = !EnemyAgent->GetBeliefs()->GetBeliefsState()["IsHealing"];
-	const bool bSafeDistanceToHeal = !EnemyAgent->GetBeliefs()->bIsClose();
-	const bool bEnemyNotVisible = EnemyAgent->GetBeliefs()->GetTarget() == nullptr;
-
-	return bInDangerOfDeath && bNotHealing && bSafeDistanceToHeal && bEnemyNotVisible;
+	return EnemyAgent->GetBeliefs()->GetBeliefsState()["SafeDistanceToHeal"] = true;
 }
 
 void UHealAction::PerformAction()
@@ -42,7 +37,9 @@ void UHealAction::PerformAction()
 bool UHealAction::IsActionComplete() const
 {
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
-	return EnemyAgent->GetHealthComponent()->GetCurrentHealthPercentage() >= 1.0f;
+	const bool bNoLongerSafeToHeal = EnemyAgent->GetBeliefs()->GetBeliefsState()["SafeDistanceToHeal"] = false;
+	const bool bFullyHealed = EnemyAgent->GetHealthComponent()->GetCurrentHealthPercentage() >= 1.0f;
+	return bFullyHealed || bNoLongerSafeToHeal;
 }
 
 void UHealAction::ApplyEffects(UWorldState& WorldState)

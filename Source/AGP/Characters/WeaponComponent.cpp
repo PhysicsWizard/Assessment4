@@ -115,7 +115,14 @@ bool UWeaponComponent::FireImplementation(const FVector& BulletStart, const FVec
 				}
 				if (HitCharacterHealth->IsDead())
 				{
-					HitCharacter->GetEnemySpawner()->IncreaseKill(DoInstaKill);
+					if (AEnemySpawner* EnemySpawner = HitCharacter->GetEnemySpawner())
+					{
+						EnemySpawner->IncreaseKill(DoInstaKill);
+					}
+					else
+					{
+						UE_LOG(LogTemp, Warning, TEXT("EnemySpawner is nullptr")); // **Log if EnemySpawner is nullptr**
+					}
 				}
 			}
 			DrawDebugLine(GetWorld(), BulletStart, HitResult.ImpactPoint, FColor::Green, false, 1.0f);
