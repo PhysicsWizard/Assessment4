@@ -32,20 +32,11 @@ void UPatrolAction::PerformAction()
 }
 
 bool UPatrolAction::IsActionComplete() const
-{
-	/*
-	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
-	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
-	const bool bTargetSpotted = EnemyBeliefs->GetBeliefsState()["TargetSpotted"];
-	const bool bInDangerOfDeath = EnemyBeliefs->GetBeliefsState()["InDangerOfDeath"];
-	return bTargetSpotted && bInDangerOfDeath;
-	*/
-	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
-	if(EnemyAgent->GetEnemyCharacterComponent()->GetSensedCharacter())
-	{
-		return true;
-	}
-	return false;
+{ 
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter()); 
+	const bool bTargetSpotted = EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"];
+	const bool bInDangerOfDeath = EnemyAgent->GetBeliefs()->GetBeliefsState()["InDangerOfDeath"];
+	return bTargetSpotted && bInDangerOfDeath; 
 }
 
 void UPatrolAction::ApplyEffects(UWorldState& WorldState)

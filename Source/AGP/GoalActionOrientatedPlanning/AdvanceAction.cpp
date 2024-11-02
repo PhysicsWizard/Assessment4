@@ -17,13 +17,9 @@ bool UAdvanceAction::IsActionPossible(const UWorldState& WorldState, const UBeli
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter()); 
 	//check if a target is directly spotted
 	const bool bTargetSpotted = EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"];
-	const bool bHasTargetPosition = EnemyAgent->GetBeliefs()->GetBeliefsStateVectors()["TargetPosition"] != FVector::ZeroVector;
-	const bool bHasTargetToAdvanceTo = bTargetSpotted && bHasTargetPosition;
+	const bool bWithinRange = EnemyAgent->GetBeliefs()->GetBeliefsState()["WithinRange"];
 
-	//if no target is spotted, check memory/ last known location
-	const bool bHasValidLastKnownLocation = EnemyAgent->GetBeliefs()->GetBeliefsStateVectors()["LastKnownTargetPosition"] != FVector::ZeroVector;
-
-	return bHasTargetToAdvanceTo || bHasValidLastKnownLocation;
+	return bTargetSpotted && !bWithinRange;
 }
 
 void UAdvanceAction::PerformAction()
@@ -35,21 +31,12 @@ void UAdvanceAction::PerformAction()
 
 bool UAdvanceAction::IsActionComplete() const
 {
-	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(GetOuter()->GetOuter());
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter()); 
-	// target not seen by agent itself
-	const bool bNoTargetSpotted = !EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"];
-	const bool bHasNoTargetPosition = EnemyAgent->GetBeliefs()->GetBeliefsStateVectors()["TargetPosition"] == FVector::ZeroVector;
-	const bool bHasNoTarget = bHasNoTargetPosition && bNoTargetSpotted;
+	//check if a target is directly spotted
+	const bool bTargetSpotted = EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"];
+	const bool bWithinRange = EnemyAgent->GetBeliefs()->GetBeliefsState()["WithinRange"];
 
-	//check if within proper distance
-	const float DistanceToSeenTarget = FVector::Dist(EnemyCharacter->GetActorLocation(),EnemyAgent->GetBeliefs()->GetBeliefsStateVectors()["TargetPosition"]);
-	const float DistanceToLastKnownPositionOfTarget = FVector::Dist(EnemyCharacter->GetActorLocation(),EnemyAgent->GetBeliefs()->GetBeliefsStateVectors()["LastKnownTargetPosition"]);
-	const bool bWithinDistanceOfTarget = DistanceToSeenTarget <= 200.0f;
-	const bool bWithinDistanceOfLastKnownPostion = DistanceToLastKnownPositionOfTarget <= 200.0f;
-	
-	
-	return bHasNoTarget || bWithinDistanceOfTarget || bWithinDistanceOfLastKnownPostion;
+	return !bTargetSpotted || bWithinRange;
 }
 
 void UAdvanceAction::ApplyEffects(UWorldState& WorldState)

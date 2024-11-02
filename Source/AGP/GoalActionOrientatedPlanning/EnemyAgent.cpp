@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "AGP/GoalActionOrientatedPlanning/EnemyAgent.h"
+
+#include "AdvanceAction.h"
 #include "AttackAction.h"
 #include "ChargeAttackAction.h"
 #include "EliminateEnemyGoal.h"
@@ -25,16 +27,17 @@ void UEnemyAgent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	   GetBeliefs()->GetBeliefsState()["TargetSpotted"] ? TEXT("true") : TEXT("false"),
 	   GetBeliefs()->GetBeliefsState()["WithinRange"] ? TEXT("true") : TEXT("false"));
 
-	/*
+	
 	if (CurrentGoal)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Current Goal: %s"), *CurrentGoal->GetName());
-	} 
+	}
+	
 	if (CurrentPlan.Num() > 0 && CurrentPlan[0])
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Current Action: %s"), *CurrentPlan[0]->GetName());
-	}
-	*/
+		UE_LOG(LogTemp, Warning, TEXT("Current Plan length: %d"), CurrentPlan.Num());
+	} 
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
@@ -61,6 +64,7 @@ void UEnemyAgent::BeginPlay()
 	Goals.Add(NewObject<UStayAliveGoal>(this)); 
 	AvailableAction.Empty();
 	AvailableAction.Add(NewObject<UChargeAttackAction>(this));
+	AvailableAction.Add(NewObject<UAdvanceAction>(this));
 	AvailableAction.Add(NewObject<UPatrolAction>(this));
 	AvailableAction.Add(NewObject<UHealAction>(this));
 	AvailableAction.Add(NewObject<URetreatAction>(this));  
@@ -112,7 +116,8 @@ void UEnemyAgent::ManageSensedCharacters()
 		if (const APlayerCharacter* Character = EnemyCharacterComponent->GetSensedCharacter())
 		{
 			const float Distance = FVector::Dist(EnemyCharacterComponent->GetActorLocation(), Character->GetActorLocation());
-			const bool bWithinRange = Distance <= 500.0f;
+			UE_LOG(LogTemp, Warning, TEXT("Distance: %f"), Distance);
+			const bool bWithinRange = Distance <= 10000.0f;
 
 			// Now we're modifying the actual belief map
 			Beliefs->GetBeliefsState()["WithinRange"] = bWithinRange;
@@ -126,6 +131,7 @@ void UEnemyAgent::ManageSensedCharacters()
 			Beliefs->GetBeliefsState()["WithinRange"] = false;
 			Beliefs->GetBeliefsStateVectors()["TargetPosition"] = FVector::ZeroVector;
 		}
+		PlanActions();
 	}
 }
 
