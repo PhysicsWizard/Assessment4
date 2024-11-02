@@ -102,6 +102,9 @@ protected:
 	 */
 	void UpdateSight();
 
+	//UPawnSensor not working for some reason
+	void PerformRaycastDetection();
+
 	/**
 	 * A pointer to the Pathfinding Subsystem.
 	 */

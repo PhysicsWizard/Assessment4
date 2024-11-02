@@ -21,17 +21,6 @@ void UEnemyAgent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	ManageHealthBeliefs();
 	ManageSensedCharacters();
 	GetBeliefs()->UpdateBeliefs();
-	
-	// Print checks
-	if (CurrentGoal)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Current Goal: %s"), *CurrentGoal->GetName());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Current Goal is null"));
-	}
-	UE_LOG(LogTemp, Warning, TEXT("CurrentPlan length: %d"), CurrentPlan.Num());
 }
 
 void UEnemyAgent::PerformAction()
@@ -137,13 +126,17 @@ void UEnemyAgent::ManageHealthBeliefs()
 
 void UEnemyAgent::ManageSensedCharacters()
 {
-	if(EnemyCharacterComponent)
+	if(AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(GetOuter()))
 	{
-		if(const ACharacter* Character = EnemyCharacterComponent->GetSensedCharacter())
+		if(const APlayerCharacter* Character = EnemyCharacter->GetSensedCharacter())
 		{
-			if(FVector::Dist(EnemyCharacterComponent->GetActorLocation(), Character->GetActorLocation()) > 300.0f)
+			if(FVector::Dist(EnemyCharacter->GetActorLocation(), Character->GetActorLocation()) > 300.0f)
 			{
 				GetBeliefs()->GetBeliefsState()["WithinRange"] = false;
+			}
+			else
+			{
+				GetBeliefs()->GetBeliefsState()["WithinRange"] = true;
 			}
 			GetBeliefs()->GetBeliefsState()["WithinRange"] = false;
 			GetBeliefs()->GetBeliefsState()["TargetSpotted"] = true;
@@ -155,6 +148,10 @@ void UEnemyAgent::ManageSensedCharacters()
 			GetBeliefs()->GetBeliefsState()["TargetSpotted"] = false;
 			GetBeliefs()->GetBeliefsStateVectors()["TargetPosition"] = FVector::ZeroVector;
 		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Enemy Character Component Invalid is null"));
 	}
 }
 

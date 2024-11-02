@@ -30,13 +30,22 @@ void AEnemyCharacter::BeginPlay()
 	if (PathfindingSubsystem)
 	{
 		CurrentPath = PathfindingSubsystem->GetRandomPath(GetActorLocation());
-	} else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Unable to find the PathfindingSubsystem"))
-	}
+	} 
 	if (PawnSensingComponent)
 	{
+		PawnSensingComponent->SetComponentTickEnabled(true);
+		PawnSensingComponent->bOnlySensePlayers = true;  
+
+		// Configure sensing settings
 		PawnSensingComponent->OnSeePawn.AddDynamic(this, &AEnemyCharacter::OnSensedPawn);
+		PawnSensingComponent->SightRadius = 1500.0f;  
+		PawnSensingComponent->SetPeripheralVisionAngle(90.0f); 
+		PawnSensingComponent->HearingThreshold = 600.0f;  
+		PawnSensingComponent->LOSHearingThreshold = 1200.0f;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No pawn sensing component"))
 	}
 }
 
@@ -169,23 +178,67 @@ void AEnemyCharacter::UpdateSight()
 		if (!PawnSensingComponent->HasLineOfSightTo(SensedCharacter))
 		{
 			SensedCharacter = nullptr;
-			UE_LOG(LogTemp, Log, TEXT("Sensed"));
-			EnemySpawner->IncreasePlayerDetected();
+			//BTW this resets the sensedcharacter, meaning the enemy cannot detect a player
+			// so resets the SensedCharacter back to a nullptr
+			if(EnemySpawner)
+			{
+				EnemySpawner->IncreasePlayerDetected();
+			}
 		}
 	}
+}
+
+void AEnemyCharacter::PerformRaycastDetection()
+{
+    FVector StartLocation = GetActorLocation();
+    FVector ForwardVector =GetActorForwardVector();
+
+    float FOVAngle = 120.0f;        // Total field of view in degrees
+    int32 NumberOfRays = 120;         // Number of line traces
+
+    // Calculate the angle increment between each ray
+    float AngleIncrement = FOVAngle / (NumberOfRays - 1);  
+    for (int32 i = 0; i < NumberOfRays; ++i)
+    {
+	    float DetectRang = 1000.0f;
+        float AngleDegrees = -FOVAngle / 2 + i * AngleIncrement;
+        FVector Direction = ForwardVector.RotateAngleAxis(AngleDegrees, FVector::UpVector);
+        FVector EndLocation = StartLocation + (Direction * DetectRang);
+    	UE_LOG(LogTemp, Log, TEXT("Searching..."));
+        FHitResult HitResult;
+        FCollisionQueryParams CollisionParams;
+        CollisionParams.AddIgnoredActor(Owner);
+
+        // Perform the line trace
+    	FColor LineColor = FColor::Green;
+        bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_Visibility, CollisionParams);
+        if (bHit && HitResult.GetActor() != nullptr)
+        {
+        	if (APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(HitResult.GetActor()))
+        	{
+        		SensedCharacter = PlayerCharacter;
+        		LineColor = FColor::Red; 
+        		break;  
+        	}
+
+        }
+    	DrawDebugLine(GetWorld(), StartLocation, EndLocation, LineColor, false, 0.2f, 0, 0.5f);
+    } 
 }
 
 
 // Called every frame
 void AEnemyCharacter::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	Super::Tick(DeltaTime); 
 	// DO NOTHING UNLESS IT IS ON THE SERVER
-	if (GetLocalRole() != ROLE_Authority) return;
+	//if (GetLocalRole() != ROLE_Authority) return;
 	
 	UpdateSight();
-	
-	 
+	//Highly inefficient i know but the sensing component isn't working so i am using this one from my previous assignment
+	PerformRaycastDetection(); // Fallback if sensing component fails
+	UE_LOG(LogTemp, Log, TEXT("Searching in Tick"));
+
 }
 
 // Called to bind functionality to input
