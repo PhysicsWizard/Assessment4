@@ -9,13 +9,16 @@
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Pathfinding/PathfindingSubsystem.h"
 
 // Sets default values
 AEnemySpawner::AEnemySpawner()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
+	RootComponent->SetIsReplicated(true);
+	bAlwaysRelevant = true;
 	bReplicates = true;
 
 }
@@ -28,6 +31,7 @@ void AEnemySpawner::BeginPlay()
 	//Set the spawn parameters to ignore collision; this is so that spawns always happen. Also Get a reference to the player. 
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));
+	PopulateSpawnLocations();
 	UE_LOG(LogTemp, Log, TEXT("Started"));
 }
 
@@ -41,9 +45,17 @@ void AEnemySpawner::Tick(float DeltaTime)
 	{
 		for (int8 i = 0; i < GetEnemySpawnAmount(PlayerCharacter->GetEnemiesKilledInLastMinute()); i++)
 		{
-			SpawnEnemy();	
+			if (HasAuthority())
+			{
+				SpawnEnemy();
+			}	
 		}
 		SpawnTimer += 5.0f;
+	}
+
+	if (PossibleSpawnLocations.IsEmpty())
+	{
+		PopulateSpawnLocations();
 	}
 
 	SpawnTimer -= DeltaTime;
@@ -51,17 +63,16 @@ void AEnemySpawner::Tick(float DeltaTime)
 
 void AEnemySpawner::SpawnEnemy()
 {
+
+	
 	//Check if using the correct game instance; this is used to get the enemy class for spawning.
 	if (const AMultiplayerGameMode* GameInstance = Cast<AMultiplayerGameMode>(GetWorld()->GetAuthGameMode()))
 	{
 		UE_LOG(LogTemp, Log, TEXT("Found GameInstance"));
 		//Find a spawn location around the player. Then Make sure it is above ground.
-		FVector PlayerLocation = PlayerCharacter->GetActorLocation();
-		FVector PointInSphere = UKismetMathLibrary::RandomUnitVector() * FMath::RandRange(40.0f, 1000.0f);
-		
-		
-		FVector SpawnPosition = PointInSphere + PlayerLocation;
-		SpawnPosition.Z = 500.0f;
+		FVector SpawnPosition =
+			PossibleSpawnLocations[FMath::RandRange(0, PossibleSpawnLocations.Num()-1)];
+		SpawnPosition.Z += 50.0f;
 
 		//Spawn Enemy and generate a stats struct for it using helper methods.
 		AEnemyCharacter* Enemy = GetWorld()->SpawnActor<AEnemyCharacter>(GameInstance->GetEnemyClass(), SpawnPosition, FRotator::ZeroRotator, SpawnParameters);
@@ -70,26 +81,49 @@ void AEnemySpawner::SpawnEnemy()
 		/*
 		FEnemyStats SpawnedEnemyStats;
 
-		SpawnedEnemyStats.Aggression = GenerateAggression(PlayerCharacter->GetEnemiesKilledInLastMinute());
+		SpawnedEnemyStats.Aggression = GenerateAggression(PlayerKillsInLastMinute);
 		SpawnedEnemyStats.SizeFactor = FMath::RandRange(0.5f, 2.5f);
-		SpawnedEnemyStats.NoiseSensitivity = GenerateNoiseSensitivity(PlayerCharacter->GetTimesDetected());
-		SpawnedEnemyStats.ImmuneToInstaKills = IsImmuneToSpecialKills(PlayerCharacter->GetSpecialKillsPerformedInLastMinute());
-
+		SpawnedEnemyStats.NoiseSensitivity = GenerateNoiseSensitivity(TimesPlayerDetected);
+		SpawnedEnemyStats.InstaKillChance = GetInstaKillChance(PlayerSpecialKillsInLastMinute);
 		
 		//Scale enemy size and set the meshes new colour and glow. 
 		float ScaleFactor = SpawnedEnemyStats.SizeFactor;
-		USkeletalMeshComponent* MeshComponent = nullptr;
 		if (Enemy)
 		{
 			Enemy->SetStats(SpawnedEnemyStats);
-			Enemy->Multicast_SetColourAndGlow(GenerateColour(SpawnedEnemyStats.Aggression, SpawnedEnemyStats.NoiseSensitivity), SpawnedEnemyStats.Aggression / 100);
+			Enemy->Multicast_SetColourAndGlow(GenerateColour(SpawnedEnemyStats.Aggression, SpawnedEnemyStats.NoiseSensitivity), SpawnedEnemyStats.NoiseSensitivity / 200);
 			Enemy->Multicast_SetMeshSize(ScaleFactor);
 			UE_LOG(LogTemp, Log, TEXT("Spawned"));
 		}
 		*/
 		
 	}
-	UE_LOG(LogTemp, Log, TEXT("Could not find Game Intstance"));
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("Could not find Game Intstance"));
+	}
+	
+}
+
+void AEnemySpawner::IncreaseKill(bool bIsSpecialKill)
+{
+	PlayerKillsInLastMinute++;
+	if (bIsSpecialKill)
+	{
+		PlayerSpecialKillsInLastMinute++;
+	}
+}
+
+void AEnemySpawner::IncreasePlayerDetected()
+{
+	TimesPlayerDetected++;
+}
+
+void AEnemySpawner::ResetKillsAndDetected()
+{
+	PlayerKillsInLastMinute = 0;
+	PlayerSpecialKillsInLastMinute = 0;
+	TimesPlayerDetected = 0;
 }
 
 //Semi-Random spawn amount determined by how many kills the player has gotten in the last minute.
@@ -197,28 +231,28 @@ float AEnemySpawner::GenerateNoiseSensitivity(float DetectionInput)
 
 	if (0 < DetectionInput && 2 >= DetectionInput)
 	{
-		NoiseSensitivity = FMath::RandRange(11.0f, 30.0f);
+		NoiseSensitivity = FMath::RandRange(250.0f, 300.0f);
 		UE_LOG(LogTemp, Log, TEXT("Enemy NoiseSensitivity: %F"), NoiseSensitivity);
 		return NoiseSensitivity;
 	}
 
 	if (2 < DetectionInput && 5 >= DetectionInput)
 	{
-		NoiseSensitivity = FMath::RandRange(31.0f, 60.0f);
+		NoiseSensitivity = FMath::RandRange(301.0f, 400.0f);
 		UE_LOG(LogTemp, Log, TEXT("Enemy NoiseSensitivity: %F"), NoiseSensitivity);
 		return NoiseSensitivity;
 	}
 	
 	if (5 < DetectionInput && 10 >= DetectionInput)
 	{
-		NoiseSensitivity = FMath::RandRange(61.0f, 85.0f);
+		NoiseSensitivity = FMath::RandRange(401.0f, 500.0f);
 		UE_LOG(LogTemp, Log, TEXT("Enemy NoiseSensitivity: %F"), NoiseSensitivity);
 		return NoiseSensitivity;
 	}
 
 	if (DetectionInput > 10)
 	{
-		NoiseSensitivity =  FMath::RandRange(86.0f, 100.0f);
+		NoiseSensitivity =  FMath::RandRange(501.0f, 600.0f);
 		UE_LOG(LogTemp, Log, TEXT("Enemy NoiseSensitivity: %F"), NoiseSensitivity);
 		return NoiseSensitivity;
 	}
@@ -226,36 +260,46 @@ float AEnemySpawner::GenerateNoiseSensitivity(float DetectionInput)
 		return NoiseSensitivity;
 }
 
-//Semi-Random chance for the enemy to be immune to special kills (functionally not implemented as I am only concerned with visuals) determined by number of special kills player has gotten in last minute.
-bool AEnemySpawner::IsImmuneToSpecialKills(int SpecialKillsPerformed)
+//Chance for player to insta-kill an enemy; increases the more special kills player gets, so that there is a higher chacne of killing the increased spawned enemies.
+float AEnemySpawner::GetInstaKillChance(int SpecialKillsPerformed)
 {
 	if (SpecialKillsPerformed <= 0)
 	{
-		return false;
+		return 0.05f;
 	}
 
 	if (SpecialKillsPerformed == 1)
 	{
-		return UKismetMathLibrary::RandomBoolWithWeight(0.05f);
+		return 0.1f;
 	}
 
 	if (SpecialKillsPerformed == 2)
 	{
-		return UKismetMathLibrary::RandomBoolWithWeight(0.1f);
+		return 0.15f;
 	}
 	
 	if (SpecialKillsPerformed == 3)
 	{
-		return UKismetMathLibrary::RandomBoolWithWeight(0.25f);
+		return 0.2f;
 	}
 
 	if (SpecialKillsPerformed >= 4)
 	{
-		return UKismetMathLibrary::RandomBoolWithWeight(0.3f);
+		return 0.3f;
 	}
 
-	return false;
+	return 0.05f;
 }
+
+void AEnemySpawner::PopulateSpawnLocations()
+{
+	PossibleSpawnLocations.Empty();
+	if (const UPathfindingSubsystem* PathfindingSubsystem = GetWorld()->GetSubsystem<UPathfindingSubsystem>())
+	{
+		PossibleSpawnLocations = PathfindingSubsystem->GetWaypointPositions();
+	}
+}
+
 
 
 

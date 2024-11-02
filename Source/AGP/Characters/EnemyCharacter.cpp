@@ -4,9 +4,10 @@
 #include "EngineUtils.h"
 #include "HealthComponent.h"
 #include "PlayerCharacter.h"
-#include "Components/SceneComponent.h"
-#include "GameFramework/Actor.h"
+#include "AGP/EnemySpawner.h"
+#include "AGP/GoalActionOrientatedPlanning/EnemyAgent.h"
 #include "AGP/Pathfinding/PathfindingSubsystem.h"
+#include "Net/UnrealNetwork.h"
 #include "Perception/PawnSensingComponent.h"
 
 // Sets default values
@@ -14,10 +15,8 @@ AEnemyCharacter::AEnemyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
 	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("Pawn Sensing Component");
-	//HealthComponent = FindComponentByClass<UHealthComponent>();
-	EnemyAgentComponent = CreateDefaultSubobject<UEnemyAgent>(TEXT("EnemyAgent"));
-	EnemyAgentComponent->SetTheOwener(this);
 }
 
 // Called when the game starts or when spawned
@@ -40,8 +39,27 @@ void AEnemyCharacter::BeginPlay()
 	{
 		PawnSensingComponent->OnSeePawn.AddDynamic(this, &AEnemyCharacter::OnSensedPawn);
 	}
+	
+	EnemyAgentComponent = NewObject<UEnemyAgent>(this);
+	EnemyAgentComponent->SetTheOwner(this);
+	
 }
 
+void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	//Replicate these properties.
+	DOREPLIFETIME(AEnemyCharacter, EnemyColourProperty);
+	DOREPLIFETIME(AEnemyCharacter, EnemyGlowFactor);
+	DOREPLIFETIME(AEnemyCharacter, EnemyScaleFactor);
+	DOREPLIFETIME(AEnemyCharacter, Stats);
+}
+
+UHealthComponent* AEnemyCharacter::GiveHealthComponent()
+{
+	return HealthComponent;
+}
 
 APlayerCharacter* AEnemyCharacter::GetSensedCharacter()
 {
@@ -160,6 +178,8 @@ void AEnemyCharacter::UpdateSight()
 		if (!PawnSensingComponent->HasLineOfSightTo(SensedCharacter))
 		{
 			SensedCharacter = nullptr;
+			UE_LOG(LogTemp, Log, TEXT("Sensed"));
+			EnemySpawner->IncreasePlayerDetected();
 		}
 	}
 }
@@ -172,7 +192,7 @@ void AEnemyCharacter::Tick(float DeltaTime)
 
 	// DO NOTHING UNLESS IT IS ON THE SERVER
 	if (GetLocalRole() != ROLE_Authority) return;
-	UE_LOG(LogTemp, Log, TEXT("ticking..."));
+	
 	UpdateSight();
 	
 	 
@@ -199,4 +219,72 @@ APlayerCharacter* AEnemyCharacter::FindPlayer() const
 	}
 	return Player;
 }
+
+void AEnemyCharacter::Multicast_SetColourAndGlow_Implementation(FLinearColor EnemyColour, float EnemyGlow)
+{
+	USkeletalMeshComponent* EnemyMesh = GetMesh();
+
+	if (EnemyMesh)
+	{
+		int32 MaterialCount = EnemyMesh->GetNumMaterials();
+			
+		for (int32 i = 0; i < MaterialCount; i++)
+		{
+			UMaterialInterface* Material = EnemyMesh->GetMaterial(i);
+			UE_LOG(LogTemp, Log, TEXT("Material %d: %s"), i, *Material->GetName());
+			UMaterialInstanceDynamic* DynamicMaterial = EnemyMesh->CreateAndSetMaterialInstanceDynamic(i);
+
+			if (i == 0)
+			{
+				DynamicMaterial->SetVectorParameterValue("BaseColor", EnemyColour);
+				DynamicMaterial->SetScalarParameterValue("Glow", EnemyGlow);
+			}
+			else if (i == 1)
+			{
+				DynamicMaterial->SetVectorParameterValue("BaseColor", EnemyColour);
+			}
+		}
+		UE_LOG(LogTemp, Log, TEXT("Colour Set"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("No Mesh Found"));
+	}
+}
+
+
+void AEnemyCharacter::Multicast_SetMeshSize_Implementation(float ScaleFactor)
+{
+	SetActorScale3D(FVector(ScaleFactor,ScaleFactor,ScaleFactor));
+}
+
+
+void AEnemyCharacter::SetStats_Implementation(FEnemyStats StatsToSet)
+{
+	Stats = StatsToSet;
+}
+
+FEnemyStats* AEnemyCharacter::GetStats()
+{
+	return &Stats;
+}
+
+FEnemyStats AEnemyCharacter::GetStats() const
+{
+	return Stats;
+}
+
+float AEnemyCharacter::GetAggressionClamped()
+{
+	float ClampedAggression = FMath::Clamp(GetStats()->Aggression, 10.0f, 90.0f);
+	return 0.3f - (ClampedAggression - 10.0f / 80.0f) * 0.2f;
+}
+
+float AEnemyCharacter::GetNoiseSenitivity()
+{
+	return Stats.NoiseSensitivity;
+}
+
+
+
 

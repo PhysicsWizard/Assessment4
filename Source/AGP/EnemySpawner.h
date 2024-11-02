@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Characters/BaseCharacter.h"
 #include "GameFramework/Actor.h"
 #include "EnemySpawner.generated.h"
 
 class APlayerCharacter;
+class ABaseCharacter;
 
 UCLASS()
 class AGP_API AEnemySpawner : public AActor
@@ -25,7 +25,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	float SpawnTimer = 0.0f;
+	float SpawnTimer = 5.0f;
 
 	APlayerCharacter* PlayerCharacter;
 
@@ -37,12 +37,29 @@ protected:
 
 	float GenerateAggression(float EnemiesKilledInput);
 	float GenerateNoiseSensitivity(float DetectionInput);
-	bool IsImmuneToSpecialKills(int SpecialKillsPerformed);
+	float GetInstaKillChance(int SpecialKillsPerformed);
+
+	TArray<FVector> PossibleSpawnLocations;
+	void PopulateSpawnLocations();
+
+
+	UPROPERTY()
+	int32 PlayerKillsInLastMinute = 0;
+
+	UPROPERTY()
+	int32 PlayerSpecialKillsInLastMinute = 0;
+
+	UPROPERTY()
+	float TimesPlayerDetected = 0;
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
 	void SpawnEnemy();
 
+	void IncreaseKill(bool bIsSpecialKill);
+
+	void IncreasePlayerDetected();
+
+	void ResetKillsAndDetected();
 };

@@ -120,7 +120,7 @@ void UEnemyAgent::ManageSensedCharacters()
 	}
 }
 
-void UEnemyAgent::SetTheOwener(AEnemyCharacter* EnemyCharacter)
+void UEnemyAgent::SetTheOwner(AEnemyCharacter* EnemyCharacter)
 {
 	EnemyCharacterComponent = EnemyCharacter;
 }
@@ -146,4 +146,10 @@ UHealthComponent* UEnemyAgent::GetHealthComponent()
 	UE_LOG(LogTemp, Log, TEXT("HealthComponent is NUll"));
 	return nullptr;
 }
+
+FEnemyStats* UEnemyAgent::GetEnemyStats()
+{
+	return GetEnemyCharacterComponent()->GetStats();
+}
+
 

@@ -6,7 +6,6 @@
 #include "GameFramework/Character.h"
 #include "BaseCharacter.h"
 #include "PlayerCharacter.h"
-#include "AGP/GoalActionOrientatedPlanning/EnemyAgent.h"
 #include "EnemyCharacter.generated.h"
 
 // Forward declarations to avoid needing to #include files in the header of this class.
@@ -14,7 +13,27 @@
 class UPawnSensingComponent;
 class APlayerCharacter;
 class UPathfindingSubsystem;
+class UEnemyAgent;
 
+USTRUCT(BlueprintType)
+struct FEnemyStats
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere)
+	float Aggression;
+
+	UPROPERTY(EditAnywhere)
+	float SizeFactor;
+
+	UPROPERTY(EditAnywhere)
+	float NoiseSensitivity;
+
+	UPROPERTY(EditAnywhere)
+	float InstaKillChance;
+
+	FEnemyStats()
+		: Aggression(10.0f), SizeFactor(1.0f), NoiseSensitivity(1.0f), InstaKillChance(0.05f){}
+};
  
 UCLASS()
 class AGP_API AEnemyCharacter : public ABaseCharacter
@@ -25,6 +44,34 @@ public:
 	// Sets default values for this character's properties
 	AEnemyCharacter();
 
+	UPROPERTY(Replicated, VisibleAnywhere)
+	FLinearColor EnemyColourProperty;
+
+	UPROPERTY(Replicated, VisibleAnywhere)
+	float EnemyGlowFactor;
+
+	UPROPERTY(Replicated, VisibleAnywhere)
+	float EnemyScaleFactor;
+
+	UFUNCTION(NetMulticast,Reliable)
+	void Multicast_SetColourAndGlow(FLinearColor EnemyColour, float EnemyGlow);
+
+	UFUNCTION(NetMulticast,Reliable)
+	void Multicast_SetMeshSize(float ScaleFactor);
+
+
+	UFUNCTION(NetMulticast, Reliable)
+	void SetStats(FEnemyStats StatsToSet);
+
+	UFUNCTION()
+	float GetAggressionClamped();
+
+	UFUNCTION()
+	float GetNoiseSenitivity();
+	
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -33,10 +80,6 @@ protected:
 	UEnemyAgent* EnemyAgentComponent;
 	UPROPERTY()
 	AActor* ItSelf;
-
-	/**
-	 * 
-	 */
 	
 	/**
 	 * Will move the character along the CurrentPath or do nothing to the character if the path is empty.
@@ -90,6 +133,13 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float PathfindingError = 150.0f; // 150 cm from target by default.
 
+	/**
+	 * Enemy Stats stored as struct.
+	 */
+	UPROPERTY(Replicated, EditAnywhere)
+	FEnemyStats Stats;
+
+	
 public:
 	// reuse these functions to be called in seperate action classes
 	void TickEvade();
@@ -100,6 +150,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override; 
 	APlayerCharacter* GetSensedCharacter();
+	FEnemyStats GetStats() const;
+	FEnemyStats* GetStats();
 
 private:
 	

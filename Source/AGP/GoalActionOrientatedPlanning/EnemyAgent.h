@@ -8,11 +8,14 @@
 #include "GOAP base/Agent.h"
 #include "EnemyAgent.generated.h"
 
+
+struct FEnemyStats;
 class AEnemyCharacter;
 /**
  * 
  */
-UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+UCLASS()
+
 class AGP_API UEnemyAgent : public UAgent
 {
 	GENERATED_BODY()
@@ -21,14 +24,12 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void PerformAction() override;
 	bool PlanActions() override;
-	void SetTheOwener(AEnemyCharacter* EnemyCharacter);
+	void SetTheOwner(AEnemyCharacter* EnemyCharacter);
 	UHealthComponent* GetHealthComponent();
 	virtual UEnemyAgentBeliefs* GetBeliefs() const;
 	virtual UEnemyAgentBeliefs* GetBeliefs() override;
 	AEnemyCharacter* GetEnemyCharacterComponent();
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Components")
-	UHealthComponent* HealthComponent;
+	FEnemyStats* GetEnemyStats();
 	
 protected:
 	UEnemyAgent();
@@ -38,7 +39,8 @@ protected:
 	
 private:
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	AEnemyCharacter* EnemyCharacterComponent;
-	 
+	UPROPERTY()
+	UHealthComponent* HealthComponent;
 };

@@ -7,8 +7,8 @@
 #include "GameFramework/Character.h"
 #include "BaseCharacter.generated.h"
 
+class AEnemySpawner;
 class UHealthComponent;
-
 UCLASS()
 class AGP_API ABaseCharacter : public ACharacter
 {
@@ -71,6 +71,9 @@ protected:
 	 */
 	void Fire(const FVector& FireAtLocation);
 
+	UPROPERTY()
+	AEnemySpawner* EnemySpawner;
+
 	
 
 public:	
@@ -83,9 +86,10 @@ public:
 	UPROPERTY()
 	int EnemiesKilledInLastMinute = 0;
 
+	AEnemySpawner* GetEnemySpawner();
+
 private:
 	void EquipWeaponImplementation(bool bEquipWeapon, const FWeaponStats& WeaponStats = FWeaponStats());
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastEquipWeapon(bool bEquipWeapon, const FWeaponStats& WeaponStats = FWeaponStats());
-
 };

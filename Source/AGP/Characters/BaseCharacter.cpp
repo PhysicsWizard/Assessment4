@@ -4,23 +4,32 @@
 #include "BaseCharacter.h"
 #include "HealthComponent.h"
 #include "PlayerCharacter.h"
+#include "AGP/EnemySpawner.h"
 #include "AGP/MultiplayerGameMode.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true; 
+	PrimaryActorTick.bCanEverTick = true;
+
 	BulletStartPosition = CreateDefaultSubobject<USceneComponent>("Bullet Start");
 	BulletStartPosition->SetupAttachment(GetRootComponent());
-	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
-
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>("Health Component");
 }
 
 // Called when the game starts or when spawned
 void ABaseCharacter::BeginPlay()
 {
+	Super::BeginPlay();
+
+	if (EnemySpawner == nullptr)
+	{
+		EnemySpawner = Cast<AEnemySpawner>(UGameplayStatics::GetActorOfClass(GetWorld(), AEnemySpawner::StaticClass()));
+	}
+	
 }
 
 void ABaseCharacter::Fire(const FVector& FireAtLocation)
@@ -29,11 +38,6 @@ void ABaseCharacter::Fire(const FVector& FireAtLocation)
 	{
 		WeaponComponent->Fire(BulletStartPosition->GetComponentLocation(), FireAtLocation);
 	}
-}
-
-UHealthComponent* ABaseCharacter::GiveHealthComponent()
-{
-	return HealthComponent;
 }
 
 void ABaseCharacter::Reload()
@@ -91,7 +95,11 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
- 
+
+AEnemySpawner* ABaseCharacter::GetEnemySpawner()
+{
+	return EnemySpawner;
+}
 
 void ABaseCharacter::EquipWeaponImplementation(bool bEquipWeapon, const FWeaponStats& WeaponStats)
 {
