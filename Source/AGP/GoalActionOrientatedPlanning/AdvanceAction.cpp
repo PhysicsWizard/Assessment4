@@ -9,6 +9,7 @@ UAdvanceAction::UAdvanceAction()
 {
 	cost = 1.0f;
 	Effects.Add("WithinRange", true);
+	Effects.Add("AttackingTarget", true); 
 }
 
 bool UAdvanceAction::IsActionPossible(const UWorldState& WorldState, const UBeliefs& Beliefs)
@@ -55,6 +56,7 @@ bool UAdvanceAction::IsActionComplete() const
 
 void UAdvanceAction::ApplyEffects(UWorldState& WorldState)
 {
+	Super::ApplyEffects(WorldState);
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
 	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs()); 
 	EnemyBeliefs->GetBeliefsState()["WithinRange"] = true; 

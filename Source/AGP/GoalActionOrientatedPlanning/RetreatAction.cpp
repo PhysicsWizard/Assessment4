@@ -12,6 +12,7 @@ URetreatAction::URetreatAction()
 	Effects.Add("InDangerOfDeath", false);
 	Effects.Add("TargetSpotted", false);
 	Effects.Add("SafeDistanceToHeal", true);
+	Effects.Add("AttackingTarget", false);
 }
 
 bool URetreatAction::IsActionPossible(const UWorldState& WorldState, const UBeliefs& Beliefs)
@@ -45,6 +46,7 @@ bool URetreatAction::IsActionComplete() const
 
 void URetreatAction::ApplyEffects(UWorldState& WorldState)
 {
+	Super::ApplyEffects(WorldState);
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
 	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
 	EnemyBeliefs->GetBeliefsState()["InDangerOfDeath"] = false;

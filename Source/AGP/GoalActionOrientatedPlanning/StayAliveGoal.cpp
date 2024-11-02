@@ -9,6 +9,7 @@ class UEnemyAgentBeliefs;
 
 UStayAliveGoal::UStayAliveGoal()
 {
+	GoalState.Add("Dying", false);
 	Priority = 5;
 }
 

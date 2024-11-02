@@ -85,6 +85,10 @@ UWorldState::UWorldState()
 {
 	States.Add("Player_One_Dead", false);
 	States.Add("Player_Two_Dead", false);
+	States.Add("AllEnemiesEliminated", false);
+	States.Add("AttackingTarget", false);
+	States.Add("Patrolling", false);
+	States.Add("Dying", false);
 	
 	//PrintWorldStates();
 }

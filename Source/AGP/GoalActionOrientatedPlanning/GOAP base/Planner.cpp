@@ -19,6 +19,8 @@ TArray<UAction*> UPlanner::CreatePlan(UAgent* Agent, UGoal* Goal, UWorldState& W
 
 	for(UAction* Action: AvailableActions)
 	{
+		bool bActionPossible = Action->IsActionPossible(*CurrentState, *CurrentBeliefs);
+		UE_LOG(LogTemp, Warning, TEXT("Action %s possible: %s"), *Action->GetName(), bActionPossible ? TEXT("true") : TEXT("false"));
 		if(Action->IsActionPossible(*CurrentState, *CurrentBeliefs))
 		{
 			ThePlan.Add(Action); 
@@ -40,28 +42,33 @@ TArray<UAction*> UPlanner::CreatePlan(UAgent* Agent, UGoal* Goal, UWorldState& W
 
 TArray<UAction*> UPlanner::FindBestPlan(UAgent* Agent, UWorldState& WorldState, UBeliefs& Beliefs)
 {
-	TArray<UGoal*> Goals =  Agent->GetGoals();
-	//UE_LOG(LogTemp, Warning, TEXT("Goals Count: %d"), Goals.Num());
+	TArray<UGoal*> Goals = Agent->GetGoals();
 	TArray<UAction*> BestPlan;
 	float BestPlanCost = FLT_MAX;
 
-	for(UGoal* Goal : Goals)
+	for (UGoal* Goal : Goals)
 	{
-		TArray<UAction*> CurrentPlan = CreatePlan(Agent, Goal, WorldState, Beliefs);
-		//UE_LOG(LogTemp, Warning, TEXT("Available Action Count: %d"), CurrentPlan.Num());
-		if(CurrentPlan.Num()>0)
+		if (!Goal->IsGoalRelevant(WorldState, Beliefs))
 		{
-			//UE_LOG(LogTemp, Warning, TEXT("Current Plan has an action"));
+			continue;
+		}
+
+		// Use a planning algorithm like A* here to find the best plan
+		TArray<UAction*> CurrentPlan = CreatePlan(Agent, Goal, WorldState, Beliefs);
+
+		if (CurrentPlan.Num() > 0)
+		{
 			float CurrentPlanCost = 0.0f;
 			for (UAction* Action : CurrentPlan)
 			{
 				CurrentPlanCost += Action->Getcost();
 			}
 
-			if(CurrentPlanCost < BestPlanCost && CurrentPlan.Num() > 0)
+			if (CurrentPlanCost < BestPlanCost)
 			{
 				BestPlanCost = CurrentPlanCost;
 				BestPlan = CurrentPlan;
+				Agent->CurrentGoal = Goal;  
 			}
 		}
 	}

@@ -41,6 +41,7 @@ bool UAttackAction::IsActionComplete() const
 
 void UAttackAction::ApplyEffects(UWorldState& WorldState)
 {
+	Super::ApplyEffects(WorldState);
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
 	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
 	EnemyBeliefs->GetBeliefsState()["AttackingTarget"] = true;

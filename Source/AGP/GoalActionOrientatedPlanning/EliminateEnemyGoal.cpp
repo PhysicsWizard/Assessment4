@@ -7,18 +7,21 @@
 
 UEliminateEnemyGoal::UEliminateEnemyGoal()
 {
-    Priority = 3;
+    GoalState.Add("AllEnemiesEliminated", true);
+    Priority = 10; // Higher priority than stay alive
 }
 
 bool UEliminateEnemyGoal::IsGoalAchieved(const UWorldState& WorldState, const UBeliefs& Beliefs) const
 {
     const bool bPlayerOneDead = WorldState.GetWorldState()["Player_One_Dead"];
     const bool bPlayerTwoDead = WorldState.GetWorldState()["Player_Two_Dead"];
-    return  bPlayerOneDead && bPlayerTwoDead;
+    WorldState.GetWorldState()["AllEnemiesEliminated"] = bPlayerOneDead && bPlayerTwoDead;
+    return WorldState.GetWorldState()["AllEnemiesEliminated"];
 }
 
 bool UEliminateEnemyGoal::IsGoalRelevant(const UWorldState& WorldState, UBeliefs& Beliefs) const
 {
+    /*
     UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
     const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
     const bool bNotAttackingTarget = !EnemyBeliefs->GetBeliefsState()["AttackingTarget"];
@@ -29,6 +32,8 @@ bool UEliminateEnemyGoal::IsGoalRelevant(const UWorldState& WorldState, UBeliefs
             && bNotAttackingTarget
             && bPlayerOneAlive
             && bPlayerTwoAlive;
+    */
+    return !WorldState.GetWorldState()["AllEnemiesEliminated"];
 }
 
 

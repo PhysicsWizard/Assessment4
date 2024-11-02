@@ -33,9 +33,6 @@ protected:
 
 	//variables
 	UPROPERTY(VisibleAnywhere, Category = "GOAP")
-	UGoal* CurrentGoal;
-
-	UPROPERTY(VisibleAnywhere, Category = "GOAP")
 	TArray<UGoal*> Goals;
 	
 	UPROPERTY(EditAnywhere, Category = "GOAP")
@@ -78,6 +75,8 @@ protected:
 	
 public:	
 	// Called every frame
+	UPROPERTY(VisibleAnywhere, Category = "GOAP")
+	UGoal* CurrentGoal;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
 	virtual bool PlanActions();

@@ -128,12 +128,10 @@ void UEnemyAgent::ManageHealthBeliefs()
 		TPair<FString, FVector> TargetMemory(TEXT("LastKnownTargetPosition"), EnemyCharacterComponent->GetSensedCharacter()->GetActorLocation());
 		GetBeliefs()->UpdateBeliefsStateVectors(TargetMemory);
 		GetBeliefs()->GetBeliefsState()["WithinRange"] = true;
-		PlanActions();
 	}
 	else
 	{
 		GetBeliefs()->GetBeliefsState()["WithinRange"] = false;
-		PlanActions();
 	}
 }
 

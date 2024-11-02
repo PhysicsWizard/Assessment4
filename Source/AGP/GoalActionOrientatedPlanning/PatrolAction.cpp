@@ -15,8 +15,14 @@ bool UPatrolAction::IsActionPossible(const UWorldState& WorldState, const UBelie
 {
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
 	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
-	const bool bNoTargetSpotted = EnemyBeliefs->GetBeliefsState()["TargetSpotted"];
+
+	const bool bNoTargetSpotted = !EnemyBeliefs->GetBeliefsState()["TargetSpotted"];
 	const bool bNotInDangerOfDeath = !EnemyBeliefs->GetBeliefsState()["InDangerOfDeath"];
+
+	UE_LOG(LogTemp, Log, TEXT("PatrolAction - bNoTargetSpotted: %s, bNotInDangerOfDeath: %s"),
+		bNoTargetSpotted ? TEXT("true") : TEXT("false"),
+		bNotInDangerOfDeath ? TEXT("true") : TEXT("false"));
+
 	return bNoTargetSpotted && bNotInDangerOfDeath;
 }
 
