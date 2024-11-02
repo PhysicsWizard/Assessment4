@@ -14,7 +14,6 @@ ABaseCharacter::ABaseCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 	BulletStartPosition = CreateDefaultSubobject<USceneComponent>("Bullet Start");
 	BulletStartPosition->SetupAttachment(GetRootComponent());
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>("Health Component");
@@ -79,6 +78,11 @@ void ABaseCharacter::Tick(float DeltaTime)
 bool ABaseCharacter::HasWeapon()
 {
 	return (WeaponComponent != nullptr);
+}
+
+UHealthComponent* ABaseCharacter::GiveHealthComponent()
+{
+	return HealthComponent;
 }
 
 void ABaseCharacter::EquipWeapon(bool bEquipWeapon, const FWeaponStats& WeaponStats)

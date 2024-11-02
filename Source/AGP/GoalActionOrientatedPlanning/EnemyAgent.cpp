@@ -56,6 +56,7 @@ void UEnemyAgent::BeginPlay()
 	AvailableAction.Add(NewObject<UTakeCoverAction>(this));
 	*/
 	Beliefs = NewObject<UEnemyAgentBeliefs>(this);
+	WorldState = UWorldState::GetInstance();
 	if(EnemyCharacterComponent)
 	{
 		HealthComponent = EnemyCharacterComponent->GiveHealthComponent();

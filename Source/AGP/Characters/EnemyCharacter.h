@@ -149,7 +149,6 @@ public:
 	void TickAdanceToTarget();
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	UHealthComponent* GiveHealthComponent();
 	APlayerCharacter* GetSensedCharacter();
 	FEnemyStats GetStats() const;
 	FEnemyStats* GetStats();

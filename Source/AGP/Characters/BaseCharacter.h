@@ -20,7 +20,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool HasWeapon();
-
+	UHealthComponent* GiveHealthComponent();
 	void EquipWeapon(bool bEquipWeapon, const FWeaponStats& WeaponStats = FWeaponStats());
 	UFUNCTION(BlueprintImplementableEvent)
 	void EquipWeaponGraphical(bool bEquipWeapon);

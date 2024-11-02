@@ -1,5 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "AGP/GoalActionOrientatedPlanning/PatrolAction.h"
+
+#include "EnemyAgent.h"
 #include "AGP/Characters/EnemyCharacter.h"
 #include "EnemyAgentBeliefs.h"
 

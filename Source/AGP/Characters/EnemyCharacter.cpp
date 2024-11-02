@@ -15,7 +15,6 @@ AEnemyCharacter::AEnemyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("Pawn Sensing Component");
 }
 
@@ -40,7 +39,7 @@ void AEnemyCharacter::BeginPlay()
 		PawnSensingComponent->OnSeePawn.AddDynamic(this, &AEnemyCharacter::OnSensedPawn);
 	}
 	
-	EnemyAgentComponent = NewObject<UEnemyAgent>(this);
+	EnemyAgentComponent = FindComponentByClass<UEnemyAgent>();
 	EnemyAgentComponent->SetTheOwner(this);
 	
 }
@@ -56,10 +55,6 @@ void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	DOREPLIFETIME(AEnemyCharacter, Stats);
 }
 
-UHealthComponent* AEnemyCharacter::GiveHealthComponent()
-{
-	return HealthComponent;
-}
 
 APlayerCharacter* AEnemyCharacter::GetSensedCharacter()
 {
