@@ -17,10 +17,19 @@
 
 void UEnemyAgent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 { 
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	ManageHealthBeliefs();
 	ManageSensedCharacters();
 	GetBeliefs()->UpdateBeliefs();
+
+	if (CurrentGoal)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Current Goal: %s"), *CurrentGoal->GetName());
+	} 
+	if (CurrentPlan.Num() > 0 && CurrentPlan[0])
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Current Action: %s"), *CurrentPlan[0]->GetName());
+	}
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
 void UEnemyAgent::PerformAction()
@@ -61,30 +70,18 @@ void UEnemyAgent::BeginPlay()
 	*/
 	Beliefs = NewObject<UEnemyAgentBeliefs>(this);
 	WorldState = UWorldState::GetInstance();
-	if(!EnemyCharacterComponent)
-	{
-		EnemyCharacterComponent = Cast<AEnemyCharacter>(GetOwner());
-		if(EnemyCharacterComponent)
-		{
-			EnemyCharacterComponent = Cast<AEnemyCharacter>(GetOuter());
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("No enemy character component found!!!")); 
-		}
-	}
-
+	EnemyCharacterComponent = Cast<AEnemyCharacter>(GetOuter());
 	if(EnemyCharacterComponent)
 	{
 		HealthComponent = EnemyCharacterComponent->GiveHealthComponent();
 		if(!HealthComponent)
 		{
 			HealthComponent = EnemyCharacterComponent->FindComponentByClass<UHealthComponent>();
+			if(!HealthComponent)
+			{
+				UE_LOG(LogTemp, Error, TEXT("No health component found!!!")); 
+			}
 		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No health component found!!!")); 
 	}
 
 	if (!IsActive())
@@ -110,27 +107,15 @@ void UEnemyAgent::ManageHealthBeliefs()
 {
 	//Updating health beliefs
 	GetBeliefs()->SetCurrentHealthPercentage(HealthComponent->GetCurrentHealthPercentage());
-
-	//Updating the position of a target
-	if(EnemyCharacterComponent->GetSensedCharacter()!=nullptr)
-	{
-		TPair<FString, FVector> TargetMemory(TEXT("LastKnownTargetPosition"), EnemyCharacterComponent->GetSensedCharacter()->GetActorLocation());
-		GetBeliefs()->UpdateBeliefsStateVectors(TargetMemory);
-		GetBeliefs()->GetBeliefsState()["WithinRange"] = true;
-	}
-	else
-	{
-		GetBeliefs()->GetBeliefsState()["WithinRange"] = false;
-	}
 }
 
 void UEnemyAgent::ManageSensedCharacters()
 {
-	if(AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(GetOuter()))
-	{
-		if(const APlayerCharacter* Character = EnemyCharacter->GetSensedCharacter())
+	if(EnemyCharacterComponent)
+	{ 
+		if(const APlayerCharacter* Character = EnemyCharacterComponent->GetSensedCharacter())
 		{
-			if(FVector::Dist(EnemyCharacter->GetActorLocation(), Character->GetActorLocation()) > 400.0f)
+			if(FVector::Dist(EnemyCharacterComponent->GetActorLocation(), Character->GetActorLocation()) > 400.0f)
 			{
 				GetBeliefs()->GetBeliefsState()["WithinRange"] = false;
 			}
@@ -141,12 +126,15 @@ void UEnemyAgent::ManageSensedCharacters()
 			GetBeliefs()->GetBeliefsState()["TargetSpotted"] = true;
 			GetBeliefs()->GetBeliefsStateVectors()["TargetPosition"] = Character->GetActorLocation();
 			GetBeliefs()->GetBeliefsStateVectors()["LastKnownTargetPosition"] = Character->GetActorLocation();
+			UE_LOG(LogTemp, Log, TEXT("TargetPosition: %s"), *Character->GetActorLocation().ToString());
+			UE_LOG(LogTemp, Log, TEXT("LastKnownTargetPosition: %s"), *Character->GetActorLocation().ToString());
 		}
 		else
 		{
 			GetBeliefs()->GetBeliefsState()["TargetSpotted"] = false;
 			GetBeliefs()->GetBeliefsStateVectors()["TargetPosition"] = FVector::ZeroVector;
 		}
+		PlanActions();
 	}
 	else
 	{

@@ -91,7 +91,10 @@ void AEnemyCharacter::TickPatrol()
 void AEnemyCharacter::TickEngage()
 {
 	float DeltaTime = GetWorld()->GetDeltaSeconds();
-	if (!SensedCharacter) return;
+	if (!SensedCharacter){
+		UE_LOG(LogTemp, Warning, TEXT("No Sensed Character"));
+		return;
+	}
 	
 	if (CurrentPath.IsEmpty())
 	{

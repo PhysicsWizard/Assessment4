@@ -15,7 +15,7 @@ UEnemyAgentBeliefs::UEnemyAgentBeliefs()
 	BeliefsState.Add("AttackingTarget", false);
 	BeliefsState.Add("InDangerOfDeath", false);
 	BeliefsState.Add("IsHealing", false);
-	BeliefsState.Add("HasFullHealth", false);
+	BeliefsState.Add("HasFullHealth", true);
 	BeliefsState.Add("WithinRange", false);
 	BeliefsState.Add("SafeDistanceToHeal", false);
 	BeliefsStateVectors.Add("TargetPosition", FVector::ZeroVector);

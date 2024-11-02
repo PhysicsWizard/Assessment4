@@ -12,6 +12,7 @@
 TArray<UAction*> UPlanner::CreatePlan(UAgent* Agent, UGoal* Goal, UWorldState& WorldState,  UBeliefs& Beliefs)
 {
 	TArray<UAction*> AvailableActions = Agent -> GetAvailableAction();
+	
 	//UE_LOG(LogTemp, Warning, TEXT("Available Action Count: %d"), AvailableActions.Num());
 	TArray<UAction*> ThePlan;
 	 UWorldState* CurrentState = WorldState.Clone();

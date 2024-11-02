@@ -16,13 +16,28 @@ UChargeAttackAction::UChargeAttackAction()
 
 bool UChargeAttackAction::IsActionPossible(const UWorldState& WorldState, const UBeliefs& Beliefs)
 {
+	/*
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
 	const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
 	const bool bTargetSpotted = EnemyBeliefs->GetBeliefsState()["TargetSpotted"];
 	const bool bWithinFiringRange = EnemyBeliefs->GetBeliefsState()["WithinRange"];
-	const bool bAttackingTarget = !EnemyBeliefs->GetBeliefsState()["AttackingTarget"];
+	//const bool bAttackingTarget = !EnemyBeliefs->GetBeliefsState()["AttackingTarget"];
 	const bool bHasFullHealth = EnemyBeliefs->GetBeliefsState()["HasFullHealth"];
-	return bTargetSpotted && bHasFullHealth && bWithinFiringRange && bAttackingTarget;
+
+	UE_LOG(LogTemp, Log, TEXT("AttackAction - TargetSpotted?: %s, WithinFiringRange?: %s, HasFullHealth?: %s"),
+	bTargetSpotted ? TEXT("true") : TEXT("false"),
+	bWithinFiringRange ? TEXT("true") : TEXT("false"),
+	bHasFullHealth ? TEXT("true") : TEXT("false"));
+	
+	//return bTargetSpotted && bHasFullHealth && bWithinFiringRange && bAttackingTarget;
+	return bTargetSpotted && bHasFullHealth && bWithinFiringRange;
+	*/
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
+	if(EnemyAgent->GetEnemyCharacterComponent()->GetSensedCharacter())
+	{
+		return true;
+	}
+	return false;
 }
 
 void UChargeAttackAction::PerformAction()
@@ -40,7 +55,13 @@ bool UChargeAttackAction::IsActionComplete() const
 	const bool bInDangerOfDeath = EnemyBeliefs->GetBeliefsState()["InDangerOfDeath"];
 	const bool bCantEngage = bNoTarget && bOutOfRange;
 	
-	return bCantEngage || bInDangerOfDeath;
+	if (bCantEngage || bInDangerOfDeath)
+	{
+		// Reset AttackingTarget to false
+		EnemyBeliefs->GetBeliefsState()["AttackingTarget"] = false;
+		return true;
+	}
+	return false;
 }
 
 void UChargeAttackAction::ApplyEffects(UWorldState& WorldState)
