@@ -7,10 +7,6 @@
 UChargeAttackAction::UChargeAttackAction()
 {
 	cost = 7.0f;
-	Preconditions.Add("TargetSpotted", true);
-	Preconditions.Add("AttackingTarget", false);
-	Preconditions.Add("WithinRange", true);
-	Preconditions.Add("HasFullHealth", true);
 	Effects.Add("AttackingTarget", true);
 }
 
@@ -18,28 +14,27 @@ bool UChargeAttackAction::IsActionPossible(const UWorldState& WorldState, const 
 {
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter()); 
 	const bool bTargetSpotted = EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"];
-	const bool bNotWithinFiringRange = !EnemyAgent->GetBeliefs()->GetBeliefsState()["WithinRange"];
-	
-	return bTargetSpotted && bNotWithinFiringRange; 
+	const bool bWithinFiringRange = EnemyAgent->GetBeliefs()->GetBeliefsState()["WithinRange"];
+	const bool bNotInDangerOfDeath = EnemyAgent->GetBeliefs()->GetBeliefsState()["InDangerOfDeath"] == false;
+	const bool bHasHealthToTankWhileCharging = EnemyAgent->GetBeliefs()->GetBeliefsState()["HasFullHealth"] == true;
+	return bTargetSpotted && bWithinFiringRange && bNotInDangerOfDeath && bHasHealthToTankWhileCharging;
 }
 
 void UChargeAttackAction::PerformAction()
 {
-	if(AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(GetOuter()->GetOuter()))
-	{ 
-		EnemyCharacter->TickEngage();
-	}
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(GetOuter()->GetOuter());
+	EnemyCharacter->TickEngage();
+	UE_LOG(LogTemp, Warning, TEXT("Engaging in offensive posture...")); 
 }
 
 bool UChargeAttackAction::IsActionComplete() const
-{
-	 
-	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
+{  
+	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter()); 
 	const bool bNoTarget = EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"] == false;
-	const bool bWithinStationFireRange = EnemyAgent->GetBeliefs()->GetBeliefsState()["WithinRange"] == true;
+	const bool bOutOfRange = EnemyAgent->GetBeliefs()->GetBeliefsState()["WithinRange"] == false;
 	const bool bInDangerOfDeath = EnemyAgent->GetBeliefs()->GetBeliefsState()["InDangerOfDeath"] == true;
 	
-	if (bNoTarget || bWithinStationFireRange || bInDangerOfDeath)
+	if (bNoTarget || bOutOfRange|| bInDangerOfDeath)
 	{
 		// Reset AttackingTarget to false
 		EnemyAgent->GetBeliefs()->GetBeliefsState()["AttackingTarget"] = false;
@@ -51,7 +46,5 @@ bool UChargeAttackAction::IsActionComplete() const
 void UChargeAttackAction::ApplyEffects(UWorldState& WorldState)
 {
 	Super::ApplyEffects(WorldState);
-	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
-	UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
-	EnemyBeliefs->GetBeliefsState()["AttackingTarget"] = true;
+	WorldState.GetWorldState()["AllEnemiesEliminated"] = true;
 }
