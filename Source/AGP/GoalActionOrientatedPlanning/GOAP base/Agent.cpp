@@ -57,7 +57,7 @@ void UAgent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponent
 }
 
 bool UAgent::PlanActions()
-{
+{ 
 	CurrentPlan = Planner->FindBestPlan(this, *WorldState, GetBeliefsConst()); 
 	return CurrentPlan.Num() > 0;
 }

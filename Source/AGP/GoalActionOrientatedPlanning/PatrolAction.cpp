@@ -7,7 +7,7 @@
 
 UPatrolAction::UPatrolAction()
 {
-	cost = 12.0f;
+	cost = 15.0f;
 	//kinda like a default state
 }
 
@@ -15,12 +15,8 @@ bool UPatrolAction::IsActionPossible(const UWorldState& WorldState, const UBelie
 {
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
 
-	bool bNoTargetSpotted = !EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"];
-	bool bNotInDangerOfDeath = !EnemyAgent->GetBeliefs()->GetBeliefsState()["InDangerOfDeath"];
-
-	UE_LOG(LogTemp, Log, TEXT("PatrolAction - bNoTargetSpotted: %s, bNotInDangerOfDeath: %s"),
-		bNoTargetSpotted ? TEXT("true") : TEXT("false"),
-		bNotInDangerOfDeath ? TEXT("true") : TEXT("false"));
+	const bool bNoTargetSpotted = EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"] == false;
+	const bool bNotInDangerOfDeath = EnemyAgent->GetBeliefs()->GetBeliefsState()["InDangerOfDeath"] == false;
 
 	return bNoTargetSpotted && bNotInDangerOfDeath;
 }
@@ -28,7 +24,10 @@ bool UPatrolAction::IsActionPossible(const UWorldState& WorldState, const UBelie
 void UPatrolAction::PerformAction()
 {
 	if(AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(GetOuter()->GetOuter()))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Patrolling...")); 
 		EnemyCharacter->TickPatrol();
+	}
 }
 
 bool UPatrolAction::IsActionComplete() const
@@ -36,7 +35,7 @@ bool UPatrolAction::IsActionComplete() const
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter()); 
 	const bool bTargetSpotted = EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"];
 	const bool bInDangerOfDeath = EnemyAgent->GetBeliefs()->GetBeliefsState()["InDangerOfDeath"];
-	return bTargetSpotted && bInDangerOfDeath; 
+	return bTargetSpotted || bInDangerOfDeath; 
 }
 
 void UPatrolAction::ApplyEffects(UWorldState& WorldState)

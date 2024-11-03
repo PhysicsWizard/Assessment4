@@ -21,8 +21,7 @@ TArray<UAction*> UPlanner::CreatePlan(UAgent* Agent, UGoal* Goal, UWorldState& W
 	while (Index < AvailableActions.Num())
 	{
 		UAction* Action = AvailableActions[Index];
-		bool bActionPossible = Action->IsActionPossible(*CurrentState, *CurrentBeliefs);
-		UE_LOG(LogTemp, Warning, TEXT("Action %s possible: %s"), *Action->GetName(), bActionPossible ? TEXT("true") : TEXT("false"));
+		bool bActionPossible = Action->IsActionPossible(*CurrentState, *CurrentBeliefs); 
         
 		if (bActionPossible)
 		{
@@ -45,8 +44,7 @@ TArray<UAction*> UPlanner::CreatePlan(UAgent* Agent, UGoal* Goal, UWorldState& W
 		return ThePlan;
 	}
 
-	// Return an empty plan if no solution is found
-	UE_LOG(LogTemp, Warning, TEXT("No valid plan could be created to achieve the goal."));
+	// Return an empty plan if no solution is found 
 	return TArray<UAction*>();
 }
 
@@ -73,7 +71,8 @@ TArray<UAction*> UPlanner::FindBestPlan(UAgent* Agent, UWorldState& WorldState, 
 			{
 				CurrentPlanCost += Action->Getcost();
 			}
-			if (Goal->GetPriority() > Agent->CurrentGoal->GetPriority())
+			// Check if this goal has a higher priority or if there’s no current goal
+			if (!Agent->CurrentGoal || Goal->GetPriority() > Agent->CurrentGoal->GetPriority())
 			{
 				BestPlan = CurrentPlan;
 				Agent->CurrentGoal = Goal;

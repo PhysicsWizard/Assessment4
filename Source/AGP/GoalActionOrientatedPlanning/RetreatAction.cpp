@@ -18,10 +18,8 @@ URetreatAction::URetreatAction()
 bool URetreatAction::IsActionPossible(const UWorldState& WorldState, const UBeliefs& Beliefs)
 {
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
-	const bool bAlmostAtHalfHealth = EnemyAgent->GetBeliefs()->bWithinHealthRangeTolerance(0.61f);
-	const bool bTargetSensed = EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"];
-
-	return bAlmostAtHalfHealth && bTargetSensed;
+	const bool bInDangerOfDeath = EnemyAgent->GetBeliefs()->GetBeliefsState()["InDangerOfDeath"];
+	return bInDangerOfDeath;
 }
 
 void URetreatAction::PerformAction()

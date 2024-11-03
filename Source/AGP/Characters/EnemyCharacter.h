@@ -148,7 +148,7 @@ protected:
 	
 public:
 	// reuse these functions to be called in seperate action classes
-	void TickEvade();
+	void TickEvade(); 
 	void TickPatrol();
 	void TickEngage();
 	void TickEngageStationary();

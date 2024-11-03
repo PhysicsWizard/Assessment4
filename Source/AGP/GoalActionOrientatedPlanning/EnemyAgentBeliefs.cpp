@@ -76,7 +76,7 @@ void UEnemyAgentBeliefs::UpdateBeliefs()
 	bool bHasFullHealth = HealthPercentage >=1.0f;
 	GetBeliefsState()["HasFullHealth"] = bHasFullHealth;
 
-	const bool bInDangerOfDeath = HealthPercentage <= 0.31f;
+	const bool bInDangerOfDeath = HealthPercentage <= 0.61f;
 	GetBeliefsState()["InDangerOfDeath"] = bInDangerOfDeath;
 	
 	float Distance = FVector::Dist(EnemyCharacter->GetActorLocation(), GetBeliefsStateVectors()["LastKnownTargetPosition"]);

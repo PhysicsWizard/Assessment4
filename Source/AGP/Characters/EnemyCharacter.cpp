@@ -2,7 +2,6 @@
 
 #include "EnemyCharacter.h"
 #include "EngineUtils.h"
-#include "HealthComponent.h"
 #include "PlayerCharacter.h"
 #include "AGP/EnemySpawner.h"
 #include "AGP/GoalActionOrientatedPlanning/EnemyAgent.h"
@@ -158,24 +157,25 @@ void AEnemyCharacter::TickGoToLocation( FVector& location)
 void AEnemyCharacter::OnSeePawnDetected(APawn* SeenPawn)
 {
 	if(SeenPawn)
-	{
-		SensedCharacter = Cast<APlayerCharacter>(SeenPawn);
-		if (SensedCharacter)
+		if (APlayerCharacter* Player = Cast<APlayerCharacter>(SeenPawn))
 		{
-			// Successfully cast to APlayerCharacter, proceed with any additional logic
-			UE_LOG(LogTemp, Log, TEXT("Player detected: %s"), *SensedCharacter->GetName());
+			SensedCharacter = Cast<APlayerCharacter>(SeenPawn);
+			if (SensedCharacter)
+			{
+				// Successfully cast to APlayerCharacter, proceed with any additional logic
+				UE_LOG(LogTemp, Log, TEXT("Player detected: %s"), *SensedCharacter->GetName());
+			}
 		}
-	}
-	else
-	{
-		SensedCharacter = nullptr;
-	}
+		else
+		{
+			SensedCharacter = nullptr;
+		}
 }
 
 void AEnemyCharacter::TickEvade()
 {
 	// Find the player and return if it can't find it.
-	//if (!SensedCharacter) return;
+	if (!SensedCharacter) return;
 
 	if (CurrentPath.IsEmpty())
 	{
@@ -183,6 +183,7 @@ void AEnemyCharacter::TickEvade()
 	}
 	MoveAlongPath();
 }
+
 
 void AEnemyCharacter::OnSensedPawn(APawn* SensedActor)
 {
@@ -255,10 +256,7 @@ void AEnemyCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime); 
 	// DO NOTHING UNLESS IT IS ON THE SERVER
 	if (GetLocalRole() != ROLE_Authority) return;
-	UpdateSight();
-	//Highly inefficient i know but the sensing component isn't working so i am using this one from my previous assignment
-	//PerformRaycastDetection(); // Fallback if sensing component fails
-
+	UpdateSight();  
 }
 
 // Called to bind functionality to input

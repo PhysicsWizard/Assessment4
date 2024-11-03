@@ -22,7 +22,6 @@ void UEnemyAgent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	ManageHealthBeliefs();
 	ManageSensedCharacters();
 	GetBeliefs()->UpdateBeliefs();
-	PlanActions();
 
 	/*
 	UE_LOG(LogTemp, Warning, TEXT("Beliefs - TargetSpotted: %s, WithinRange: %s"),
@@ -37,10 +36,15 @@ void UEnemyAgent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	}
 	if (CurrentPlan.Num() > 0 && CurrentPlan[0])
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Current Action: %s"), *CurrentPlan[0]->GetName());
-		UE_LOG(LogTemp, Warning, TEXT("Current Plan length: %d"), CurrentPlan.Num());
+		for(int i = 0; i <CurrentPlan.Num(); i++)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Current Action: %s"), *CurrentPlan[i]->GetName());
+		}
 	} 
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	UE_LOG(LogTemp, Warning, TEXT("Sensed character detected: %s"), 
+	   GetEnemyCharacterComponent()->GetSensedCharacter() != nullptr ? TEXT("true") : TEXT("false"));
 }
 
 void UEnemyAgent::PerformAction()
@@ -134,6 +138,7 @@ void UEnemyAgent::ManageSensedCharacters()
 			Beliefs->GetBeliefsState()["WithinRange"] = false;
 			Beliefs->GetBeliefsStateVectors()["TargetPosition"] = FVector::ZeroVector;
 		}
+		PlanActions();
 	}
 }
 

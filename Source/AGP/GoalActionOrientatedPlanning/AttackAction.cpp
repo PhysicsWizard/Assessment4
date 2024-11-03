@@ -16,21 +16,23 @@ bool UAttackAction::IsActionPossible(const UWorldState& WorldState, const UBelie
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
 	const bool bTargetSpotted = EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"];
 	const bool bWithinFiringRange = EnemyAgent->GetBeliefs()->GetBeliefsState()["WithinRange"];
-	return bTargetSpotted && bWithinFiringRange;
+	const bool bNotInDangerOfDeath = EnemyAgent->GetBeliefs()->GetBeliefsState()["InDangerOfDeath"] == false;
+	return bTargetSpotted && bWithinFiringRange && bNotInDangerOfDeath;
 }
 
 void UAttackAction::PerformAction()
 {
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(GetOuter()->GetOuter());
 	EnemyCharacter->TickEngage();
+	UE_LOG(LogTemp, Warning, TEXT("Attacking...")); 
 }
 
 bool UAttackAction::IsActionComplete() const
 {
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter()); 
-	const bool bNoTarget = !EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"];
-	const bool bOutOfRange = !EnemyAgent->GetBeliefs()->GetBeliefsState()["WithinRange"];
-	const bool bInDangerOfDeath = EnemyAgent->GetBeliefs()->GetBeliefsState()["InDangerOfDeath"];
+	const bool bNoTarget = EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"] == false;
+	const bool bOutOfRange = EnemyAgent->GetBeliefs()->GetBeliefsState()["WithinRange"] == false;
+	const bool bInDangerOfDeath = EnemyAgent->GetBeliefs()->GetBeliefsState()["InDangerOfDeath"] == true;
 	
 	if (bNoTarget || bOutOfRange|| bInDangerOfDeath)
 	{
@@ -45,5 +47,5 @@ void UAttackAction::ApplyEffects(UWorldState& WorldState)
 {
 	Super::ApplyEffects(WorldState);
 	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter()); 
-	EnemyAgent->GetBeliefs()->GetBeliefsState()["AttackingTarget"] = true;
+	WorldState.GetWorldState()["AllEnemiesEliminated"] = true;
 }
