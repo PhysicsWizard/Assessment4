@@ -135,6 +135,8 @@ ANavigationNode* UPathfindingSubsystem::GetRandomNode()
 
 ANavigationNode* UPathfindingSubsystem::FindNearestNode(const FVector& TargetLocation)
 {
+
+	
 	// Failure condition.
 	if (Nodes.Num() == 0)
 	{

@@ -16,6 +16,8 @@ AEnemyCharacter::AEnemyCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("Pawn Sensing Component");
+
+	bReplicates = true;
 }
 
 // Called when the game starts or when spawned
@@ -30,7 +32,12 @@ void AEnemyCharacter::BeginPlay()
 	if (PathfindingSubsystem)
 	{
 		CurrentPath = PathfindingSubsystem->GetRandomPath(GetActorLocation());
-	} 
+		UE_LOG(LogTemp, Warning, TEXT("There is a Pathfinding Subsystem"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("There is no PathFinding Subsystem"));
+	}
 	if (PawnSensingComponent)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("There is a pawn sensing component"))
@@ -51,6 +58,7 @@ void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	DOREPLIFETIME(AEnemyCharacter, EnemyGlowFactor);
 	DOREPLIFETIME(AEnemyCharacter, EnemyScaleFactor);
 	DOREPLIFETIME(AEnemyCharacter, Stats);
+	DOREPLIFETIME(AEnemyCharacter, SensedCharacter);
 }
 
 
@@ -81,6 +89,11 @@ void AEnemyCharacter::MoveAlongPath()
 
 void AEnemyCharacter::TickPatrol()
 {
+	if (PathfindingSubsystem == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("PathfindingSubsystem is null in AEnemyCharacter::TickPatrol"));
+		return;
+	}
 	if (CurrentPath.IsEmpty())
 	{
 		CurrentPath = PathfindingSubsystem->GetRandomPath(GetActorLocation());
@@ -95,7 +108,11 @@ void AEnemyCharacter::TickEngage()
 		UE_LOG(LogTemp, Warning, TEXT("No Sensed Character"));
 		return;
 	}
-	
+	if (PathfindingSubsystem == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("PathfindingSubsystem is null in AEnemyCharacter::TickEngage"));
+		return;
+	}
 	if (CurrentPath.IsEmpty())
 	{
 		CurrentPath = PathfindingSubsystem->GetPath(GetActorLocation(), SensedCharacter->GetActorLocation());
@@ -119,6 +136,11 @@ void AEnemyCharacter::TickEngage()
 void AEnemyCharacter::TickEngageStationary()
 {
 	float DeltaTime = GetWorld()->GetDeltaSeconds();
+	if (PathfindingSubsystem == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("PathfindingSubsystem is null in AEnemyCharacter::TickEngageStationary"));
+		return;
+	}
 	if (!SensedCharacter) return;
 	if (HasWeapon())
 	{
@@ -138,6 +160,12 @@ void AEnemyCharacter::TickEngageStationary()
 void AEnemyCharacter::TickAdanceToTarget()
 {
 	if (!SensedCharacter) return;
+
+	if (PathfindingSubsystem == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("PathfindingSubsystem is null in AEnemyCharacter::TickAdvanceToTarget"));
+		return;
+	}
 	
 	if (CurrentPath.IsEmpty())
 	{
@@ -148,6 +176,12 @@ void AEnemyCharacter::TickAdanceToTarget()
 
 void AEnemyCharacter::TickGoToLocation( FVector& location)
 {
+
+	if (PathfindingSubsystem == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("PathfindingSubsystem is null in AEnemyCharacter::TickGoToLocation"));
+		return;
+	}
 	if (CurrentPath.IsEmpty())
 	{
 		CurrentPath = PathfindingSubsystem->GetPath(GetActorLocation(), location);

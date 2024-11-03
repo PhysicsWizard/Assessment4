@@ -52,8 +52,19 @@ TArray<UAction*> UPlanner::CreatePlan(UAgent* Agent, UGoal* Goal, UWorldState& W
 
 TArray<UAction*> UPlanner::FindBestPlan(UAgent* Agent, UWorldState& WorldState, UBeliefs& Beliefs)
 {
-	TArray<UGoal*> Goals = Agent->GetGoals();
 	TArray<UAction*> BestPlan;
+	if (!Agent)
+	{
+		UE_LOG(LogTemp, Log, TEXT("AGent Not Found"));
+		return BestPlan;
+	}
+	TArray<UGoal*> Goals = Agent->GetGoals();
+
+	if (Goals.IsEmpty())
+	{
+		UE_LOG(LogTemp, Log, TEXT("No Goals"));
+		return BestPlan;
+	}
 	float BestPlanCost = FLT_MAX;
 
 	for (UGoal* Goal : Goals)
@@ -73,7 +84,7 @@ TArray<UAction*> UPlanner::FindBestPlan(UAgent* Agent, UWorldState& WorldState, 
 			{
 				CurrentPlanCost += Action->Getcost();
 			}
-			if (Goal->GetPriority() > Agent->CurrentGoal->GetPriority())
+			if (  Agent->CurrentGoal && Goal->GetPriority() > Agent->CurrentGoal->GetPriority())
 			{
 				BestPlan = CurrentPlan;
 				Agent->CurrentGoal = Goal;
