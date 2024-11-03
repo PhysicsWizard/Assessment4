@@ -22,17 +22,19 @@ void UEnemyAgent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	ManageHealthBeliefs();
 	ManageSensedCharacters();
 	GetBeliefs()->UpdateBeliefs();
+	PlanActions();
 
+	/*
 	UE_LOG(LogTemp, Warning, TEXT("Beliefs - TargetSpotted: %s, WithinRange: %s"),
 	   GetBeliefs()->GetBeliefsState()["TargetSpotted"] ? TEXT("true") : TEXT("false"),
 	   GetBeliefs()->GetBeliefsState()["WithinRange"] ? TEXT("true") : TEXT("false"));
+	*/
 
-	
+	//Display current goal, action and amount of actions in enemy agent's current plan
 	if (CurrentGoal)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Current Goal: %s"), *CurrentGoal->GetName());
 	}
-	
 	if (CurrentPlan.Num() > 0 && CurrentPlan[0])
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Current Action: %s"), *CurrentPlan[0]->GetName());
@@ -132,7 +134,6 @@ void UEnemyAgent::ManageSensedCharacters()
 			Beliefs->GetBeliefsState()["WithinRange"] = false;
 			Beliefs->GetBeliefsStateVectors()["TargetPosition"] = FVector::ZeroVector;
 		}
-		PlanActions();
 	}
 }
 

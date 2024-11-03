@@ -73,7 +73,12 @@ TArray<UAction*> UPlanner::FindBestPlan(UAgent* Agent, UWorldState& WorldState, 
 			{
 				CurrentPlanCost += Action->Getcost();
 			}
-
+			if (Goal->GetPriority() > Agent->CurrentGoal->GetPriority())
+			{
+				BestPlan = CurrentPlan;
+				Agent->CurrentGoal = Goal;
+				break; // Higher priority goal found, break the loop
+			}
 			if (CurrentPlanCost < BestPlanCost)
 			{
 				BestPlanCost = CurrentPlanCost;

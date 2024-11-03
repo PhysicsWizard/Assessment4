@@ -12,31 +12,18 @@ UEliminateEnemyGoal::UEliminateEnemyGoal()
 }
 
 bool UEliminateEnemyGoal::IsGoalAchieved(const UWorldState& WorldState, const UBeliefs& Beliefs) const
-{
-    UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
-    const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
+{ 
     const bool bPlayerOneDead = WorldState.GetWorldState()["Player_One_Dead"];
     const bool bPlayerTwoDead = WorldState.GetWorldState()["Player_Two_Dead"];
+    const bool bInDangerOfDeath = Beliefs.GetBeliefsStateConst()["InDangerOfDeath"];
     WorldState.GetWorldState()["AllEnemiesEliminated"] = bPlayerOneDead && bPlayerTwoDead;
-    return WorldState.GetWorldState()["AllEnemiesEliminated"];
-    //return WorldState.GetWorldState()["AllEnemiesEliminated"] || EnemyBeliefs->GetBeliefsState()["AttackingTarget"];
+    return WorldState.GetWorldState()["AllEnemiesEliminated"] && !bInDangerOfDeath;
 }
 
 bool UEliminateEnemyGoal::IsGoalRelevant(const UWorldState& WorldState, UBeliefs& Beliefs) const
 {
-    /*
-    UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter());
-    const UEnemyAgentBeliefs* EnemyBeliefs = Cast<UEnemyAgentBeliefs>(EnemyAgent->GetBeliefs());
-    const bool bNotAttackingTarget = !EnemyBeliefs->GetBeliefsState()["AttackingTarget"];
-    const bool bNotInDangerOfDeath = EnemyBeliefs->GetBeliefsState()["InDangerOfDeath"];
-    const bool bPlayerOneAlive = !WorldState.GetWorldState()["Player_One_Dead"];
-    const bool bPlayerTwoAlive = !WorldState.GetWorldState()["Player_Two_Dead"];
-    return bNotInDangerOfDeath
-            && bNotAttackingTarget
-            && bPlayerOneAlive
-            && bPlayerTwoAlive;
-    */
-    return !WorldState.GetWorldState()["AllEnemiesEliminated"];
+    const bool bInDangerOfDeath = Beliefs.GetBeliefsState()["InDangerOfDeath"];
+    return !WorldState.GetWorldState()["AllEnemiesEliminated"] || bInDangerOfDeath;
 }
 
 

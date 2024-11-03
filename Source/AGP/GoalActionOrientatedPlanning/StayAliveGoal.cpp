@@ -9,18 +9,16 @@ class UEnemyAgentBeliefs;
 
 UStayAliveGoal::UStayAliveGoal()
 {
-	GoalState.Add("Dying", false);
-	Priority = 5;
+	GoalState.Add("InDangerOfDeath", false);
+	Priority = 15;
 }
 
 bool UStayAliveGoal::IsGoalAchieved(const UWorldState& WorldState, const UBeliefs& Beliefs) const
 {
-	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter()); 
-	return EnemyAgent->GetBeliefs()->GetBeliefsState()["InDangerOfDeath"] == false;
+	return Beliefs.GetBeliefsStateConst()["InDangerOfDeath"] == false;
 }
 
 bool UStayAliveGoal::IsGoalRelevant(const UWorldState& WorldState, UBeliefs& Beliefs) const
 {
-	UEnemyAgent* EnemyAgent = Cast<UEnemyAgent>(GetOuter()); 
-	return EnemyAgent->GetBeliefs()->GetBeliefsState()["InDangerOfDeath"] == true;
+	return Beliefs.GetBeliefsState()["InDangerOfDeath"] == true;
 }

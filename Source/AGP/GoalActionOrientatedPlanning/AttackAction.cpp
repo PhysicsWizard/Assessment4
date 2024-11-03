@@ -22,7 +22,7 @@ bool UAttackAction::IsActionPossible(const UWorldState& WorldState, const UBelie
 void UAttackAction::PerformAction()
 {
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(GetOuter()->GetOuter());
-	EnemyCharacter->TickEngageStationary();
+	EnemyCharacter->TickEngage();
 }
 
 bool UAttackAction::IsActionComplete() const
