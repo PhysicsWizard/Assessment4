@@ -147,9 +147,12 @@ void AEnemyCharacter::TickAdanceToTarget()
 
 void AEnemyCharacter::TickGoToLocation( FVector& location)
 {
-	if (CurrentPath.IsEmpty())
+	if (GetLocalRole() == ROLE_Authority)
 	{
-		CurrentPath = PathfindingSubsystem->GetPath(GetActorLocation(), location);
+		if (CurrentPath.IsEmpty())
+		{
+			CurrentPath = PathfindingSubsystem->GetPath(GetActorLocation(), location);
+		}
 	}
 	MoveAlongPath();
 }
