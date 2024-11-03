@@ -17,14 +17,15 @@ bool UAttackAction::IsActionPossible(const UWorldState& WorldState, const UBelie
 	const bool bTargetSpotted = EnemyAgent->GetBeliefs()->GetBeliefsState()["TargetSpotted"];
 	const bool bWithinFiringRange = EnemyAgent->GetBeliefs()->GetBeliefsState()["WithinRange"];
 	const bool bNotInDangerOfDeath = EnemyAgent->GetBeliefs()->GetBeliefsState()["InDangerOfDeath"] == false;
-	return bTargetSpotted && bWithinFiringRange && bNotInDangerOfDeath;
+	const bool bDoesNotHaveHealthToTankWhileCharging = EnemyAgent->GetBeliefs()->GetBeliefsState()["HasFullHealth"] == false;
+	return bDoesNotHaveHealthToTankWhileCharging && bTargetSpotted && bWithinFiringRange && bNotInDangerOfDeath;
 }
 
 void UAttackAction::PerformAction()
 {
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(GetOuter()->GetOuter());
-	EnemyCharacter->TickEngage();
-	UE_LOG(LogTemp, Warning, TEXT("Attacking...")); 
+	EnemyCharacter->TickEngageStationary()();
+	UE_LOG(LogTemp, Warning, TEXT("Engaging in defensive posture...")); 
 }
 
 bool UAttackAction::IsActionComplete() const
